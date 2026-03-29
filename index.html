@@ -26,7 +26,6 @@
             overflow: hidden;
         }
 
-        /* Шапка */
         .header {
             width: 100%;
             padding: 10px 15px;
@@ -34,41 +33,15 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
         }
 
-        .player-info {
-            text-align: center;
-        }
+        .player-info { text-align: center; }
+        .player-name { font-size: 12px; color: #888; margin-bottom: 3px; }
+        .player-score { font-size: 32px; font-weight: 800; color: #fff; }
+        .player-info.bot .player-score { color: #ff6b6b; }
+        .player-info.you .player-score { color: #4ecdc4; }
+        .vs { font-size: 16px; font-weight: 700; color: #e94560; }
 
-        .player-name {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 3px;
-        }
-
-        .player-score {
-            font-size: 32px;
-            font-weight: 800;
-            color: #fff;
-            text-shadow: 0 0 20px currentColor;
-        }
-
-        .vs {
-            font-size: 16px;
-            font-weight: 700;
-            color: #e94560;
-        }
-
-        .player-info.bot .player-score {
-            color: #ff6b6b;
-        }
-
-        .player-info.you .player-score {
-            color: #4ecdc4;
-        }
-
-        /* ELO Рейтинг */
         .elo-section {
             width: 100%;
             padding: 8px 15px;
@@ -82,46 +55,22 @@
             margin-bottom: 5px;
         }
 
-        .elo-label {
-            font-size: 12px;
-            color: #ffd700;
-            font-weight: 700;
-            min-width: 50px;
-        }
-
+        .elo-label { font-size: 12px; color: #ffd700; font-weight: 700; min-width: 50px; }
+        
         .elo-progress-container {
             flex: 1;
             height: 8px;
             background: rgba(255,255,255,0.1);
             border-radius: 4px;
             overflow: hidden;
-            position: relative;
         }
 
         .elo-progress {
             height: 100%;
             border-radius: 4px;
             transition: width 0.5s ease;
-            position: relative;
         }
 
-        .elo-progress::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* Ранги ELO */
         .elo-bronze { background: linear-gradient(90deg, #cd7f32, #e8a87c); }
         .elo-silver { background: linear-gradient(90deg, #c0c0c0, #e8e8e8); }
         .elo-gold { background: linear-gradient(90deg, #ffd700, #ffed4e); }
@@ -131,28 +80,10 @@
         .elo-grandmaster { background: linear-gradient(90deg, #ff4500, #ff6347); }
         .elo-legend { background: linear-gradient(90deg, #dc143c, #ff1493); }
 
-        .elo-value {
-            font-size: 14px;
-            font-weight: 700;
-            min-width: 50px;
-            text-align: right;
-        }
+        .elo-value { font-size: 14px; font-weight: 700; min-width: 50px; text-align: right; }
+        .elo-rank { text-align: center; font-size: 11px; color: #888; text-transform: uppercase; }
+        .elo-rank span { color: #ffd700; font-weight: 700; }
 
-        .elo-rank {
-            text-align: center;
-23:19
-font-size: 11px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .elo-rank span {
-            color: #ffd700;
-            font-weight: 700;
-        }
-
-        /* Статистика под ELO */
         .elo-stats {
             display: flex;
             justify-content: space-around;
@@ -161,17 +92,8 @@ font-size: 11px;
             color: #888;
         }
 
-        .elo-stat {
-            text-align: center;
-        }
+        .elo-stat-value { color: #fff; font-weight: 700; font-size: 13px; }
 
-        .elo-stat-value {
-            color: #fff;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        /* Игровое поле */
         .game-container {
             position: relative;
             width: 100%;
@@ -184,27 +106,8 @@ font-size: 11px;
             width: 100%;
             height: 100%;
             border-radius: 20px;
-            box-shadow: 
-                0 0 60px rgba(78, 205, 196, 0.3),
-                inset 0 0 100px rgba(0,0,0,0.5);
-        }
-
-        .ice-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            pointer-events: none;
-            background: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 50px,
-                    rgba(255,255,255,0.02) 50px,
-                    rgba(255,255,255,0.02) 51px
-                );
+            box-shadow: 0 0 60px rgba(78, 205, 196, 0.3);
+            touch-action: none;
         }
 
         .timer {
@@ -214,7 +117,8 @@ font-size: 11px;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.5);
             padding: 6px 15px;
-            border-radius: 15px;
+23:40
+border-radius: 15px;
             font-size: 16px;
             font-weight: 700;
             font-family: monospace;
@@ -226,12 +130,11 @@ font-size: 11px;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            pointer-events: none;
             z-index: 10;
         }
 
         .status-text {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 800;
             color: #fff;
             text-shadow: 0 0 30px rgba(255,255,255,0.5);
@@ -239,13 +142,11 @@ font-size: 11px;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         .goal-message {
             position: absolute;
@@ -259,21 +160,11 @@ font-size: 11px;
             font-size: 24px;
             font-weight: 800;
             z-index: 20;
-            transition: transform 0.5s ease;
+            transition: transform 0.3s ease;
         }
 
-        .goal-message.show {
-            transform: translate(-50%, -50%) scale(1);
-            animation: goalBounce 0.5s ease;
-        }
+        .goal-message.show { transform: translate(-50%, -50%) scale(1); }
 
-        @keyframes goalBounce {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-
-        /* Статистика матча */
         .match-stats {
             display: flex;
             gap: 20px;
@@ -282,24 +173,14 @@ font-size: 11px;
             color: #888;
         }
 
-        .match-stat {
-            text-align: center;
-        }
+        .match-stat-value { font-size: 16px; font-weight: 700; color: #fff; }
 
-        .match-stat-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* Управление */
         .controls {
             width: 100%;
             padding: 10px 15px;
             display: flex;
             justify-content: center;
-23:19
-gap: 15px;
+            gap: 15px;
         }
 
         .control-btn {
@@ -311,20 +192,10 @@ gap: 15px;
             font-weight: 700;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
         }
 
-        .control-btn:active {
-            transform: scale(0.95);
-        }
+        .control-btn.secondary { background: rgba(255,255,255,0.1); }
 
-        .control-btn.secondary {
-            background: rgba(255,255,255,0.1);
-            box-shadow: none;
-        }
-
-        /* Экран окончания */
         .game-over {
             position: fixed;
             top: 0;
@@ -337,33 +208,16 @@ gap: 15px;
             justify-content: center;
             flex-direction: column;
             z-index: 100;
-            backdrop-filter: blur(10px);
             padding: 20px;
         }
 
-        .game-over.active {
-            display: flex;
-        }
+        .game-over.active { display: flex; }
 
-        .winner-text {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
+        .winner-text { font-size: 36px; font-weight: 800; margin-bottom: 15px; }
+        .winner-text.win { color: #4ecdc4; }
+        .winner-text.lose { color: #ff6b6b; }
 
-        .winner-text.win {
-            color: #4ecdc4;
-        }
-
-        .winner-text.lose {
-            color: #ff6b6b;
-        }
-
-        .final-score {
-            font-size: 56px;
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
+        .final-score { font-size: 56px; font-weight: 800; margin-bottom: 20px; }
 
         .elo-change {
             font-size: 24px;
@@ -373,15 +227,8 @@ gap: 15px;
             border-radius: 25px;
         }
 
-        .elo-change.positive {
-            background: rgba(0,255,0,0.2);
-            color: #00ff00;
-        }
-
-        .elo-change.negative {
-            background: rgba(255,0,0,0.2);
-            color: #ff4444;
-        }
+        .elo-change.positive { background: rgba(0,255,0,0.2); color: #00ff00; }
+        .elo-change.negative { background: rgba(255,0,0,0.2); color: #ff4444; }
 
         .match-summary {
             background: rgba(255,255,255,0.05);
@@ -399,20 +246,10 @@ gap: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .summary-row:last-child {
-            border-bottom: none;
-        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label { color: #888; }
+        .summary-value { font-weight: 700; color: #fff; }
 
-        .summary-label {
-            color: #888;
-        }
-
-        .summary-value {
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* История матчей */
         .history-btn {
             position: fixed;
             top: 10px;
@@ -424,7 +261,8 @@ gap: 15px;
             height: 40px;
             border-radius: 50%;
             font-size: 20px;
-            cursor: pointer;
+23:40
+cursor: pointer;
             z-index: 50;
         }
 
@@ -441,16 +279,9 @@ gap: 15px;
             padding: 60px 20px 20px;
         }
 
-        .history-modal.active {
-            display: block;
-        }
+        .history-modal.active { display: block; }
 
-        .history-title {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+        .history-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; text-align: center; }
 
         .history-item {
             background: rgba(255,255,255,0.05);
@@ -462,23 +293,9 @@ gap: 15px;
             align-items: center;
         }
 
-        .history-result {
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .history-result.win {
-            color: #4ecdc4;
-        }
-23:19
-.history-result.lose {
-            color: #ff6b6b;
-        }
-
-        .history-elo {
-            font-size: 14px;
-            color: #888;
-        }
+        .history-result { font-weight: 700; font-size: 18px; }
+        .history-result.win { color: #4ecdc4; }
+        .history-result.lose { color: #ff6b6b; }
 
         .close-history {
             position: fixed;
@@ -493,13 +310,26 @@ gap: 15px;
             font-size: 24px;
             cursor: pointer;
         }
+
+        /* Отладочная панель */
+        .debug-info {
+            position: fixed;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 1000;
+            max-width: 200px;
+        }
     </style>
 </head>
 <body>
-    <!-- Кнопка истории -->
     <button class="history-btn" onclick="toggleHistory()">📊 </button>
 
-    <!-- Шапка со счётом -->
     <div class="header">
         <div class="player-info you">
             <div class="player-name">ВЫ</div>
@@ -512,7 +342,6 @@ gap: 15px;
         </div>
     </div>
 
-    <!-- ELO Рейтинг -->
     <div class="elo-section">
         <div class="elo-bar">
             <div class="elo-label">ELO</div>
@@ -542,10 +371,8 @@ gap: 15px;
         </div>
     </div>
 
-    <!-- Игровое поле -->
-    <div class="game-container">
+    <div class="game-container" id="gameContainer">
         <canvas id="gameCanvas"></canvas>
-        <div class="ice-overlay"></div>
         <div class="timer" id="timer">03:00</div>
         
         <div class="game-status" id="gameStatus">
@@ -555,7 +382,6 @@ gap: 15px;
         <div class="goal-message hidden" id="goalMessage">ГОЛ! 🏒 </div>
     </div>
 
-    <!-- Статистика матча -->
     <div class="match-stats">
         <div class="match-stat">
             <div>Период</div>
@@ -565,19 +391,18 @@ gap: 15px;
             <div>Владение</div>
             <div class="match-stat-value" id="possession">50%</div>
         </div>
-        <div class="match-stat">
+23:40
+<div class="match-stat">
             <div>Удары</div>
             <div class="match-stat-value" id="shots">0</div>
         </div>
     </div>
 
-    <!-- Управление -->
     <div class="controls">
         <button class="control-btn secondary" onclick="pauseGame()">⏸ ПАУЗА</button>
         <button class="control-btn" onclick="resetGame()">🔄  НОВАЯ ИГРА</button>
     </div>
 
-    <!-- Экран окончания -->
     <div class="game-over" id="gameOver">
         <div class="winner-text" id="winnerText">ПОБЕДА!</div>
         <div class="final-score" id="finalScore">5 : 3</div>
@@ -591,8 +416,7 @@ gap: 15px;
             <div class="summary-row">
                 <span class="summary-label">Ваши голы</span>
                 <span class="summary-value" id="matchGoals">5</span>
-23:19
-</div>
+            </div>
             <div class="summary-row">
                 <span class="summary-label">Удары по воротам</span>
                 <span class="summary-value" id="matchShots">12</span>
@@ -606,38 +430,42 @@ gap: 15px;
         <button class="control-btn" onclick="resetGame()">ИГРАТЬ СНОВА</button>
     </div>
 
-    <!-- История матчей -->
     <div class="history-modal" id="historyModal">
         <button class="close-history" onclick="toggleHistory()">✕</button>
         <div class="history-title">📊  История матчей</div>
         <div id="historyList"></div>
     </div>
 
+    <div class="debug-info" id="debugInfo">Touch: not detected</div>
+
     <script>
-        // Инициализация Telegram
+        // Telegram
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
-        // Canvas настройка
+        // Canvas
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
+        const container = document.getElementById('gameContainer');
+        const debugInfo = document.getElementById('debugInfo');
+
         function resizeCanvas() {
-            const container = canvas.parentElement;
             canvas.width = container.clientWidth;
             canvas.height = container.clientHeight;
+            if (!gameState.running) draw();
         }
-        resizeCanvas();
+        
         window.addEventListener('resize', resizeCanvas);
+        // Инициализация размера с задержкой для мобильных
+        setTimeout(resizeCanvas, 100);
 
-        // ELO СИСТЕМА
+        // ELO CONFIG
         const ELO_CONFIG = {
             MAX_ELO: 5000,
             START_ELO: 1000,
             K_FACTOR_BASE: 32,
-            BOT_ELO: 1200, // Средний ELO бота
-            
+            BOT_ELO: 1200,
             RANKS: [
                 { name: 'Бронза III', min: 0, max: 1099, class: 'elo-bronze' },
                 { name: 'Бронза II', min: 1100, max: 1199, class: 'elo-bronze' },
@@ -654,7 +482,8 @@ gap: 15px;
                 { name: 'Алмаз III', min: 2800, max: 2999, class: 'elo-diamond' },
                 { name: 'Алмаз II', min: 3000, max: 3199, class: 'elo-diamond' },
                 { name: 'Алмаз I', min: 3200, max: 3499, class: 'elo-diamond' },
-                { name: 'Мастер III', min: 3500, max: 3749, class: 'elo-master' },
+23:40
+{ name: 'Мастер III', min: 3500, max: 3749, class: 'elo-master' },
                 { name: 'Мастер II', min: 3750, max: 3999, class: 'elo-master' },
                 { name: 'Мастер I', min: 4000, max: 4249, class: 'elo-master' },
                 { name: 'Грандмастер', min: 4250, max: 4499, class: 'elo-grandmaster' },
@@ -662,7 +491,6 @@ gap: 15px;
             ]
         };
 
-        // Загрузка ELO данных
         let eloData = {
             current: ELO_CONFIG.START_ELO,
             max: ELO_CONFIG.START_ELO,
@@ -675,9 +503,7 @@ gap: 15px;
 
         function loadEloData() {
             const saved = localStorage.getItem('hockeyElo');
-            if (saved) {
-                eloData = JSON.parse(saved);
-            }
+            if (saved) eloData = JSON.parse(saved);
             updateEloDisplay();
         }
 
@@ -688,27 +514,20 @@ gap: 15px;
         function getRank(elo) {
             return ELO_CONFIG.RANKS.find(r => elo >= r.min && elo <= r.max) || ELO_CONFIG.RANKS[0];
         }
-23:19
-function calculateEloChange(playerElo, opponentElo, result) {
-            // result: 1 = победа, 0 = поражение, 0.5 = ничья
+
+        function calculateEloChange(playerElo, opponentElo, result) {
             const expected = 1 / (1 + Math.pow(10, (opponentElo - playerElo) / 400));
-            
-            // K-factor зависит от ELO
             let k = ELO_CONFIG.K_FACTOR_BASE;
             if (playerElo > 2400) k = 16;
             else if (playerElo > 2000) k = 24;
-            
-            // Бонус за серию
             if (eloData.streak >= 3) k *= 1.1;
-            
             const change = Math.round(k * (result - expected));
-            return Math.max(-50, Math.min(50, change)); // Ограничение ±50
+            return Math.max(-50, Math.min(50, change));
         }
 
         function updateElo(won, matchStats) {
             const result = won ? 1 : 0;
             const change = calculateEloChange(eloData.current, ELO_CONFIG.BOT_ELO, result);
-            
             const oldElo = eloData.current;
             eloData.current = Math.max(0, Math.min(ELO_CONFIG.MAX_ELO, eloData.current + change));
             eloData.max = Math.max(eloData.max, eloData.current);
@@ -723,7 +542,6 @@ function calculateEloChange(playerElo, opponentElo, result) {
             
             eloData.maxStreak = Math.max(eloData.maxStreak, Math.abs(eloData.streak));
             
-            // Сохранение истории
             eloData.history.unshift({
                 date: new Date().toISOString(),
                 result: won ? 'win' : 'loss',
@@ -734,12 +552,9 @@ function calculateEloChange(playerElo, opponentElo, result) {
                 shots: matchStats.shots
             });
             
-            // Ограничение истории
             if (eloData.history.length > 50) eloData.history.pop();
-            
             saveEloData();
             updateEloDisplay();
-            
             return { change, oldElo };
         }
 
@@ -749,8 +564,9 @@ function calculateEloChange(playerElo, opponentElo, result) {
             
             document.getElementById('eloValue').textContent = eloData.current;
             document.getElementById('eloRank').textContent = rank.name;
-            document.getElementById('eloProgress').className = `elo-progress ${rank.class}`;
-            document.getElementById('eloProgress').style.width = progress + '%';
+            const progressEl = document.getElementById('eloProgress');
+            progressEl.className = `elo-progress ${rank.class}`;
+            progressEl.style.width = progress + '%';
             
             document.getElementById('totalWins').textContent = eloData.wins;
             document.getElementById('totalLosses').textContent = eloData.losses;
@@ -760,17 +576,18 @@ function calculateEloChange(playerElo, opponentElo, result) {
             document.getElementById('winRate').textContent = winRate + '%';
             
             const streakText = eloData.streak > 0 ? `+${eloData.streak}` : eloData.streak;
-            document.getElementById('streak').textContent = streakText;
-            document.getElementById('streak').style.color = eloData.streak > 0 ? '#4ecdc4' : eloData.streak < 0 ? '#ff6b6b' : '#fff';
+23:40
+const streakEl = document.getElementById('streak');
+            streakEl.textContent = streakText;
+            streakEl.style.color = eloData.streak > 0 ? '#4ecdc4' : eloData.streak < 0 ? '#ff6b6b' : '#fff';
         }
 
-        // Игровые константы
+        // Game constants
         const GAME_DURATION = 180;
         const WIN_SCORE = 5;
         const FRICTION = 0.985;
         const MAX_SPEED = 15;
 
-        // Состояние игры
         let gameState = {
             running: false,
             paused: false,
@@ -783,11 +600,146 @@ function calculateEloChange(playerElo, opponentElo, result) {
             startTime: null
         };
 
-        // Объекты игры
         let puck = { x: 0, y: 0, vx: 0, vy: 0, radius: 12, color: '#333' };
-23:19
-let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 };
+        let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 };
         let bot = { x: 0, y: 0, radius: 25, color: '#ff6b6b', speed: 4, state: 'defense' };
+
+        // УЛУЧШЕННАЯ ОБРАБОТКА ВВОДА
+        let touchId = null;
+
+        function getCanvasPos(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function updatePlayerTarget(x, y) {
+            // Ограничение зоны игрока (только нижняя половина)
+            const minY = canvas.height / 2 + player.radius;
+            const maxY = canvas.height - player.radius - 10;
+            const minX = player.radius;
+            const maxX = canvas.width - player.radius;
+            
+            player.targetX = Math.max(minX, Math.min(maxX, x));
+            player.targetY = Math.max(minY, Math.min(maxY, y));
+        }
+
+        // Touch events с захватом указателя
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            debugInfo.textContent = 'Touch START detected';
+            
+            if (!gameState.running) {
+                startGame();
+                return;
+            }
+            
+            const touch = e.changedTouches[0];
+            touchId = touch.identifier;
+            const pos = getCanvasPos(touch.clientX, touch.clientY);
+            updatePlayerTarget(pos.x, pos.y);
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (!gameState.running || touchId === null) return;
+            
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === touchId) {
+                    const pos = getCanvasPos(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+                    updatePlayerTarget(pos.x, pos.y);
+                    debugInfo.textContent = `Touch move: ${Math.round(pos.x)},${Math.round(pos.y)}`;
+                    break;
+                }
+            }
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === touchId) {
+                    touchId = null;
+                    debugInfo.textContent = 'Touch END';
+                    break;
+                }
+            }
+        }, {passive: false});
+
+        canvas.addEventListener('touchcancel', function(e) {
+            touchId = null;
+            debugInfo.textContent = 'Touch CANCEL';
+        }, {passive: false});
+
+        // Mouse events для тестирования на ПК
+        let isMouseDown = false;
+        
+        canvas.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            isMouseDown = true;
+            debugInfo.textContent = 'Mouse DOWN';
+            
+            if (!gameState.running) {
+                startGame();
+                return;
+            }
+23:40
+const pos = getCanvasPos(e.clientX, e.clientY);
+            updatePlayerTarget(pos.x, pos.y);
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (!isMouseDown || !gameState.running) return;
+            e.preventDefault();
+            const pos = getCanvasPos(e.clientX, e.clientY);
+            updatePlayerTarget(pos.x, pos.y);
+            debugInfo.textContent = `Mouse move: ${Math.round(pos.x)},${Math.round(pos.y)}`;
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            isMouseDown = false;
+            debugInfo.textContent = 'Mouse UP';
+        });
+
+        canvas.addEventListener('mouseleave', function(e) {
+            isMouseDown = false;
+        });
+
+        // Pointer events (современный стандарт)
+        canvas.addEventListener('pointerdown', function(e) {
+            e.preventDefault();
+            canvas.setPointerCapture(e.pointerId);
+            debugInfo.textContent = 'Pointer DOWN';
+            
+            if (!gameState.running) {
+                startGame();
+                return;
+            }
+            
+            const pos = getCanvasPos(e.clientX, e.clientY);
+            updatePlayerTarget(pos.x, pos.y);
+        });
+
+        canvas.addEventListener('pointermove', function(e) {
+            if (!gameState.running) return;
+            e.preventDefault();
+            const pos = getCanvasPos(e.clientX, e.clientY);
+            updatePlayerTarget(pos.x, pos.y);
+        });
+
+        canvas.addEventListener('pointerup', function(e) {
+            canvas.releasePointerCapture(e.pointerId);
+            debugInfo.textContent = 'Pointer UP';
+        });
+
+        // Клик для старта (запасной вариант)
+        canvas.addEventListener('click', function(e) {
+            debugInfo.textContent = 'CLICK detected';
+            if (!gameState.running) startGame();
+        });
 
         function resetPositions() {
             const centerX = canvas.width / 2;
@@ -805,42 +757,6 @@ let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 
             
             bot.x = centerX;
             bot.y = 80;
-        }
-
-        // Ввод
-        let isDragging = false;
-
-        canvas.addEventListener('touchstart', handleInput, {passive: false});
-        canvas.addEventListener('touchmove', handleInput, {passive: false});
-        canvas.addEventListener('touchend', () => isDragging = false);
-        
-        canvas.addEventListener('mousedown', (e) => { isDragging = true; handleMouse(e); });
-        canvas.addEventListener('mousemove', (e) => { if (isDragging) handleMouse(e); });
-        canvas.addEventListener('mouseup', () => isDragging = false);
-
-        function handleInput(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            
-            player.targetX = touch.clientX - rect.left;
-            player.targetY = touch.clientY - rect.top;
-            
-            player.targetY = Math.max(canvas.height/2 + player.radius, 
-                           Math.min(canvas.height - player.radius - 10, player.targetY));
-            player.targetX = Math.max(player.radius, 
-                           Math.min(canvas.width - player.radius, player.targetX));
-        }
-
-        function handleMouse(e) {
-            const rect = canvas.getBoundingClientRect();
-            player.targetX = e.clientX - rect.left;
-            player.targetY = e.clientY - rect.top;
-            
-            player.targetY = Math.max(canvas.height/2 + player.radius, 
-                           Math.min(canvas.height - player.radius - 10, player.targetY));
-            player.targetX = Math.max(player.radius, 
-                           Math.min(canvas.width - player.radius, player.targetX));
         }
 
         function updatePlayer() {
@@ -868,8 +784,7 @@ let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 
                     targetY = puck.y + 30;
                     break;
                 case 'defense':
-                    const defendX = Math.max(50, Math.min(canvas.width - 50, 
-                        puck.x + (puck.x - centerX) * 0.3));
+                    const defendX = Math.max(50, Math.min(canvas.width - 50, puck.x + (puck.x - centerX) * 0.3));
                     targetX = defendX;
                     targetY = 80 + Math.abs(puck.x - centerX) * 0.1;
                     break;
@@ -888,9 +803,9 @@ let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 
 
         function updatePuck() {
             puck.x += puck.vx;
-            puck.y += puck.vy;
-23:19
-puck.vx *= FRICTION;
+23:40
+puck.y += puck.vy;
+            puck.vx *= FRICTION;
             puck.vy *= FRICTION;
             
             const speed = Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy);
@@ -899,7 +814,6 @@ puck.vx *= FRICTION;
                 puck.vy = (puck.vy / speed) * MAX_SPEED;
             }
             
-            // Стенки
             if (puck.x - puck.radius < 0) {
                 puck.x = puck.radius;
                 puck.vx *= -0.8;
@@ -909,7 +823,6 @@ puck.vx *= FRICTION;
                 puck.vx *= -0.8;
             }
             
-            // Голы
             const goalWidth = 100;
             const goalLeft = (canvas.width - goalWidth) / 2;
             const goalRight = (canvas.width + goalWidth) / 2;
@@ -993,7 +906,7 @@ puck.vx *= FRICTION;
             msg.classList.remove('hidden');
             msg.classList.add('show');
             setTimeout(() => {
-23:19
+23:40
 msg.classList.remove('show');
                 msg.classList.add('hidden');
             }, 1500);
@@ -1005,7 +918,6 @@ msg.classList.remove('show');
             
             const centerX = canvas.width / 2;
             
-            // Линии
             ctx.strokeStyle = 'rgba(255,255,255,0.2)';
             ctx.lineWidth = 2;
             ctx.setLineDash([10, 10]);
@@ -1021,7 +933,6 @@ msg.classList.remove('show');
             ctx.arc(centerX, canvas.height/2, 50, 0, Math.PI*2);
             ctx.stroke();
             
-            // Ворота
             const goalWidth = 100;
             ctx.fillStyle = 'rgba(78, 205, 196, 0.3)';
             ctx.fillRect((canvas.width - goalWidth)/2, canvas.height - 5, goalWidth, 5);
@@ -1031,7 +942,6 @@ msg.classList.remove('show');
             drawPaddle(player);
             drawPaddle(bot);
             
-            // Шайба
             ctx.shadowBlur = 20;
             ctx.shadowColor = '#fff';
             ctx.fillStyle = puck.color;
@@ -1083,10 +993,7 @@ msg.classList.remove('show');
                 gameState.timeRemaining--;
                 updateTimer();
                 lastTime = Date.now();
-                
-                if (gameState.timeRemaining <= 0) {
-                    endGame();
-                }
+                if (gameState.timeRemaining <= 0) endGame();
             }
             
             requestAnimationFrame(gameLoop);
@@ -1108,18 +1015,19 @@ msg.classList.remove('show');
             document.getElementById('shots').textContent = gameState.shots;
             const total = gameState.playerScore + gameState.botScore;
             const possession = total > 0 ? Math.round((gameState.playerScore / total) * 100) : 50;
-23:19
-document.getElementById('possession').textContent = possession + '%';
+            document.getElementById('possession').textContent = possession + '%';
         }
 
         function startGame() {
-            document.getElementById('gameStatus').classList.add('hidden');
+23:40
+document.getElementById('gameStatus').classList.add('hidden');
             gameState.running = true;
             gameState.paused = false;
             gameState.startTime = Date.now();
             resetPositions();
             lastTime = Date.now();
             gameLoop();
+            debugInfo.textContent = 'Game STARTED';
         }
 
         function pauseGame() {
@@ -1151,6 +1059,8 @@ document.getElementById('possession').textContent = possession + '%';
             updateStats();
             resetPositions();
             draw();
+            touchId = null;
+            isMouseDown = false;
         }
 
         function endGame() {
@@ -1169,13 +1079,9 @@ document.getElementById('possession').textContent = possession + '%';
             
             const eloResult = updateElo(won, matchStats);
             
-            // Отображение результатов
-            const winnerText = document.getElementById('winnerText');
-            winnerText.textContent = won ? 'ПОБЕДА! 🏆' : 'ПОРАЖЕНИЕ 😔 ';
-            winnerText.className = 'winner-text ' + (won ? 'win' : 'lose');
-            
-            document.getElementById('finalScore').textContent = 
-                `${gameState.playerScore} : ${gameState.botScore}`;
+            document.getElementById('winnerText').textContent = won ? 'ПОБЕДА! 🏆' : 'ПОРАЖЕНИЕ 😔 ';
+            document.getElementById('winnerText').className = 'winner-text ' + (won ? 'win' : 'lose');
+            document.getElementById('finalScore').textContent = `${gameState.playerScore} : ${gameState.botScore}`;
             
             const eloChangeEl = document.getElementById('eloChange');
             const changeText = eloResult.change > 0 ? `+${eloResult.change}` : eloResult.change;
@@ -1195,14 +1101,10 @@ document.getElementById('possession').textContent = possession + '%';
             }
         }
 
-        // История матчей
         function toggleHistory() {
             const modal = document.getElementById('historyModal');
             modal.classList.toggle('active');
-            
-            if (modal.classList.contains('active')) {
-                renderHistory();
-            }
+            if (modal.classList.contains('active')) renderHistory();
         }
 
         function renderHistory() {
@@ -1210,13 +1112,13 @@ document.getElementById('possession').textContent = possession + '%';
             list.innerHTML = '';
             
             if (eloData.history.length === 0) {
-23:19
-list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет матчей</div>';
+                list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет матчей</div>';
                 return;
             }
             
             eloData.history.slice(0, 20).forEach(match => {
-                const date = new Date(match.date);
+23:40
+const date = new Date(match.date);
                 const dateStr = `${date.getDate()}.${date.getMonth()+1} ${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}`;
                 
                 const item = document.createElement('div');
@@ -1228,7 +1130,7 @@ list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет
                     </div>
                     <div style="text-align:right;">
                         <div style="font-size:20px;font-weight:700;">${match.score}</div>
-                        <div class="history-elo" style="color:${match.eloChange >= 0 ? '#4ecdc4' : '#ff6b6b'}">
+                        <div style="color:${match.eloChange >= 0 ? '#4ecdc4' : '#ff6b6b'}">
                             ${match.eloChange >= 0 ? '+' : ''}${match.eloChange} → ${match.eloAfter}
                         </div>
                     </div>
@@ -1237,14 +1139,13 @@ list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет
             });
         }
 
-        // Старт
-        canvas.addEventListener('click', () => { if (!gameState.running) startGame(); });
-        canvas.addEventListener('touchstart', () => { if (!gameState.running) startGame(); }, {passive: true});
-
         // Инициализация
         loadEloData();
-        resetPositions();
-        draw();
+        setTimeout(() => {
+            resizeCanvas();
+            resetPositions();
+            draw();
+        }, 200);
         updateTimer();
 
         tg.MainButton.setText('🏒  Играть в хокей');
@@ -1252,5 +1153,5 @@ list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет
     </script>
 </body>
 </html>
-23:19
+23:40
 Initial commit
