@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>🏒  Хокей Бот</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -11,64 +12,73 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             user-select: none;
             touch-action: none;
+        }
+
+        html, body {
+            position: fixed;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(180deg, #0a1628 0%, #1a3a5c 50%, #0d2137 100%);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: #fff;
-            overflow: hidden;
         }
 
+        /* Фиксированная шапка */
         .header {
             width: 100%;
-            padding: 10px 15px;
+            padding: 8px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(0,0,0,0.3);
+            flex-shrink: 0;
         }
 
         .player-info { text-align: center; }
-        .player-name { font-size: 12px; color: #888; margin-bottom: 3px; }
-        .player-score { font-size: 32px; font-weight: 800; color: #fff; }
+        .player-name { font-size: 10px; color: #888; }
+        .player-score { font-size: 24px; font-weight: 800; }
         .player-info.bot .player-score { color: #ff6b6b; }
         .player-info.you .player-score { color: #4ecdc4; }
-        .vs { font-size: 16px; font-weight: 700; color: #e94560; }
+        .vs { font-size: 14px; color: #e94560; }
 
+        /* ELO компактный */
         .elo-section {
             width: 100%;
-            padding: 8px 15px;
+            padding: 5px 10px;
             background: rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
         .elo-bar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 5px;
+            gap: 8px;
         }
 
-        .elo-label { font-size: 12px; color: #ffd700; font-weight: 700; min-width: 50px; }
+        .elo-label { font-size: 10px; color: #ffd700; min-width: 35px; }
         
         .elo-progress-container {
             flex: 1;
-            height: 8px;
+            height: 6px;
             background: rgba(255,255,255,0.1);
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }
 
         .elo-progress {
             height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
+            border-radius: 3px;
+            transition: width 0.3s ease;
         }
 
         .elo-bronze { background: linear-gradient(90deg, #cd7f32, #e8a87c); }
@@ -80,48 +90,67 @@
         .elo-grandmaster { background: linear-gradient(90deg, #ff4500, #ff6347); }
         .elo-legend { background: linear-gradient(90deg, #dc143c, #ff1493); }
 
-        .elo-value { font-size: 14px; font-weight: 700; min-width: 50px; text-align: right; }
-        .elo-rank { text-align: center; font-size: 11px; color: #888; text-transform: uppercase; }
-        .elo-rank span { color: #ffd700; font-weight: 700; }
+        .elo-value { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+        .elo-rank { text-align: center; font-size: 9px; color: #888; margin-top: 2px; }
+        .elo-rank span { color: #ffd700; }
 
-        .elo-stats {
+        /* ИГРОВОЕ ПОЛЕ - ГЛАВНЫЙ ФИКС */
+        .game-wrapper {
+            position: relative;
+            width: 100%;
+            flex: 1;
             display: flex;
-            justify-content: space-around;
-            padding: 5px 0;
-            font-size: 11px;
-            color: #888;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            min-height: 0;
         }
-
-        .elo-stat-value { color: #fff; font-weight: 700; font-size: 13px; }
 
         .game-container {
             position: relative;
             width: 100%;
-            max-width: 400px;
-            aspect-ratio: 2/3;
-            margin: 5px 0;
+            max-width: 350px;
+            height: 100%;
+            max-height: 525px;
         }
 
         #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 20px;
-            box-shadow: 0 0 60px rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+07:23
+background: rgba(10, 30, 50, 0.5);
+            touch-action: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Невидимый оверлей для захвата касаний */
+        .touch-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 5;
             touch-action: none;
         }
 
         .timer {
             position: absolute;
-            top: 10px;
+            top: 8px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.5);
-            padding: 6px 15px;
-23:40
-border-radius: 15px;
-            font-size: 16px;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 700;
             font-family: monospace;
+            z-index: 10;
+            pointer-events: none;
         }
 
         .game-status {
@@ -130,72 +159,81 @@ border-radius: 15px;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            z-index: 10;
+            z-index: 20;
+            pointer-events: none;
         }
 
         .status-text {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 800;
             color: #fff;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
             animation: pulse 1.5s infinite;
+            line-height: 1.3;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
         }
 
         .hidden { display: none !important; }
 
         .goal-message {
             position: absolute;
-            top: 30%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
             background: linear-gradient(135deg, #ffd700, #ffaa00);
             color: #000;
-            padding: 15px 30px;
-            border-radius: 15px;
-            font-size: 24px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 20px;
             font-weight: 800;
-            z-index: 20;
+            z-index: 30;
             transition: transform 0.3s ease;
+            pointer-events: none;
         }
 
         .goal-message.show { transform: translate(-50%, -50%) scale(1); }
 
+        /* Статистика */
         .match-stats {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             padding: 5px;
-            font-size: 12px;
+            font-size: 10px;
             color: #888;
+            flex-shrink: 0;
         }
 
-        .match-stat-value { font-size: 16px; font-weight: 700; color: #fff; }
+        .match-stat-value { font-size: 14px; font-weight: 700; color: #fff; }
 
+        /* Управление */
         .controls {
             width: 100%;
-            padding: 10px 15px;
+            padding: 8px;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .control-btn {
             background: linear-gradient(135deg, #e94560, #c73e54);
             border: none;
             color: #fff;
-            padding: 12px 25px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 18px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
-        .control-btn.secondary { background: rgba(255,255,255,0.1); }
+        .control-btn.secondary { background: rgba(255,255,255,0.15); }
 
+        /* Модальные окна */
         .game-over {
             position: fixed;
             top: 0;
@@ -208,41 +246,43 @@ border-radius: 15px;
             justify-content: center;
             flex-direction: column;
             z-index: 100;
-            padding: 20px;
+            padding: 15px;
         }
 
         .game-over.active { display: flex; }
 
-        .winner-text { font-size: 36px; font-weight: 800; margin-bottom: 15px; }
+        .winner-text { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
         .winner-text.win { color: #4ecdc4; }
         .winner-text.lose { color: #ff6b6b; }
 
-        .final-score { font-size: 56px; font-weight: 800; margin-bottom: 20px; }
+        .final-score { font-size: 42px; font-weight: 800; margin-bottom: 10px; }
 
         .elo-change {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 15px;
-            padding: 10px 25px;
-            border-radius: 25px;
+            margin-bottom: 10px;
+            padding: 8px 20px;
+            border-radius: 20px;
         }
 
         .elo-change.positive { background: rgba(0,255,0,0.2); color: #00ff00; }
-        .elo-change.negative { background: rgba(255,0,0,0.2); color: #ff4444; }
+07:23
+.elo-change.negative { background: rgba(255,0,0,0.2); color: #ff4444; }
 
         .match-summary {
             background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
+            font-size: 13px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
@@ -250,20 +290,21 @@ border-radius: 15px;
         .summary-label { color: #888; }
         .summary-value { font-weight: 700; color: #fff; }
 
+        /* Кнопки */
         .history-btn {
             position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.1);
+            top: 5px;
+            right: 5px;
+            background: rgba(255,255,255,0.15);
             border: none;
             color: #fff;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            font-size: 20px;
-23:40
-cursor: pointer;
+            font-size: 18px;
+            cursor: pointer;
             z-index: 50;
+            touch-action: manipulation;
         }
 
         .history-modal {
@@ -276,54 +317,57 @@ cursor: pointer;
             display: none;
             z-index: 200;
             overflow-y: auto;
-            padding: 60px 20px 20px;
+            padding: 50px 15px 15px;
         }
 
         .history-modal.active { display: block; }
 
-        .history-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; text-align: center; }
+        .history-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; text-align: center; }
 
         .history-item {
             background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 13px;
         }
 
-        .history-result { font-weight: 700; font-size: 18px; }
+        .history-result { font-weight: 700; font-size: 14px; }
         .history-result.win { color: #4ecdc4; }
         .history-result.lose { color: #ff6b6b; }
 
         .close-history {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             background: rgba(255,255,255,0.2);
             border: none;
             color: #fff;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
+            z-index: 201;
         }
 
-        /* Отладочная панель */
-        .debug-info {
+        /* Отладка */
+        .debug-panel {
             position: fixed;
-            bottom: 5px;
-            left: 5px;
-            background: rgba(0,0,0,0.7);
+            bottom: 2px;
+            left: 2px;
+            background: rgba(0,0,0,0.8);
             color: #0f0;
             font-family: monospace;
-            font-size: 10px;
-            padding: 5px;
-            border-radius: 5px;
+            font-size: 9px;
+            padding: 4px 6px;
+            border-radius: 4px;
             z-index: 1000;
-            max-width: 200px;
+            max-width: 150px;
+            line-height: 1.3;
         }
     </style>
 </head>
@@ -351,35 +395,25 @@ cursor: pointer;
             <div class="elo-value" id="eloValue">1000</div>
         </div>
         <div class="elo-rank">Ранг: <span id="eloRank">Бронза III</span></div>
-        <div class="elo-stats">
-            <div class="elo-stat">
-                <div>Побед</div>
-                <div class="elo-stat-value" id="totalWins">0</div>
-            </div>
-            <div class="elo-stat">
-                <div>Поражений</div>
-                <div class="elo-stat-value" id="totalLosses">0</div>
-            </div>
-            <div class="elo-stat">
-                <div>Винрейт</div>
-                <div class="elo-stat-value" id="winRate">0%</div>
-            </div>
-            <div class="elo-stat">
-                <div>Серия</div>
-                <div class="elo-stat-value" id="streak">0</div>
-            </div>
-        </div>
     </div>
 
-    <div class="game-container" id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
-        <div class="timer" id="timer">03:00</div>
-        
-        <div class="game-status" id="gameStatus">
-            <div class="status-text">ТАПНИТЕ<br>ДЛЯ СТАРТА</div>
-        </div>
+    <!-- ОБЁРТКА ИГРЫ -->
+    <div class="game-wrapper">
+        <div class="game-container" id="gameContainer">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- НЕВИДИМЫЙ СЛОЙ ДЛЯ КАСАНИЙ -->
+07:23
+<div class="touch-layer" id="touchLayer"></div>
+            
+            <div class="timer" id="timer">03:00</div>
+            
+            <div class="game-status" id="gameStatus">
+                <div class="status-text">ТАПНИТЕ<br>ДЛЯ СТАРТА</div>
+            </div>
 
-        <div class="goal-message hidden" id="goalMessage">ГОЛ! 🏒 </div>
+            <div class="goal-message hidden" id="goalMessage">ГОЛ! 🏒 </div>
+        </div>
     </div>
 
     <div class="match-stats">
@@ -391,8 +425,7 @@ cursor: pointer;
             <div>Владение</div>
             <div class="match-stat-value" id="possession">50%</div>
         </div>
-23:40
-<div class="match-stat">
+        <div class="match-stat">
             <div>Удары</div>
             <div class="match-stat-value" id="shots">0</div>
         </div>
@@ -400,7 +433,7 @@ cursor: pointer;
 
     <div class="controls">
         <button class="control-btn secondary" onclick="pauseGame()">⏸ ПАУЗА</button>
-        <button class="control-btn" onclick="resetGame()">🔄  НОВАЯ ИГРА</button>
+        <button class="control-btn" onclick="resetGame()">🔄  НОВАЯ</button>
     </div>
 
     <div class="game-over" id="gameOver">
@@ -410,20 +443,16 @@ cursor: pointer;
         
         <div class="match-summary">
             <div class="summary-row">
-                <span class="summary-label">Продолжительность</span>
+                <span class="summary-label">Время</span>
                 <span class="summary-value" id="matchDuration">2:45</span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Ваши голы</span>
+                <span class="summary-label">Голы</span>
                 <span class="summary-value" id="matchGoals">5</span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Удары по воротам</span>
+                <span class="summary-label">Удары</span>
                 <span class="summary-value" id="matchShots">12</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Точность</span>
-                <span class="summary-value" id="matchAccuracy">42%</span>
             </div>
         </div>
         
@@ -432,11 +461,11 @@ cursor: pointer;
 
     <div class="history-modal" id="historyModal">
         <button class="close-history" onclick="toggleHistory()">✕</button>
-        <div class="history-title">📊  История матчей</div>
+        <div class="history-title">📊  История</div>
         <div id="historyList"></div>
     </div>
 
-    <div class="debug-info" id="debugInfo">Touch: not detected</div>
+    <div class="debug-panel" id="debug">Init...</div>
 
     <script>
         // Telegram
@@ -444,23 +473,35 @@ cursor: pointer;
         tg.expand();
         tg.ready();
 
+        const debug = document.getElementById('debug');
+        function log(msg) {
+            debug.innerHTML = msg + '<br>' + debug.innerHTML.substring(0, 100);
+            console.log(msg);
+        }
+
         // Canvas
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const touchLayer = document.getElementById('touchLayer');
         const container = document.getElementById('gameContainer');
-        const debugInfo = document.getElementById('debugInfo');
 
-        function resizeCanvas() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
+        // Размеры canvas
+        function resize() {
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            log(`Resize: ${canvas.width}x${canvas.height}`);
             if (!gameState.running) draw();
         }
-        
-        window.addEventListener('resize', resizeCanvas);
-        // Инициализация размера с задержкой для мобильных
-        setTimeout(resizeCanvas, 100);
 
-        // ELO CONFIG
+        // Ждём загрузки
+        window.addEventListener('load', () => {
+            setTimeout(resize, 100);
+            setTimeout(resize, 500);
+        });
+        window.addEventListener('resize', resize);
+
+        // ELO
         const ELO_CONFIG = {
             MAX_ELO: 5000,
             START_ELO: 1000,
@@ -472,7 +513,8 @@ cursor: pointer;
                 { name: 'Бронза I', min: 1200, max: 1299, class: 'elo-bronze' },
                 { name: 'Серебро III', min: 1300, max: 1399, class: 'elo-silver' },
                 { name: 'Серебро II', min: 1400, max: 1499, class: 'elo-silver' },
-                { name: 'Серебро I', min: 1500, max: 1599, class: 'elo-silver' },
+07:23
+{ name: 'Серебро I', min: 1500, max: 1599, class: 'elo-silver' },
                 { name: 'Золото III', min: 1600, max: 1799, class: 'elo-gold' },
                 { name: 'Золото II', min: 1800, max: 1999, class: 'elo-gold' },
                 { name: 'Золото I', min: 2000, max: 2199, class: 'elo-gold' },
@@ -482,8 +524,7 @@ cursor: pointer;
                 { name: 'Алмаз III', min: 2800, max: 2999, class: 'elo-diamond' },
                 { name: 'Алмаз II', min: 3000, max: 3199, class: 'elo-diamond' },
                 { name: 'Алмаз I', min: 3200, max: 3499, class: 'elo-diamond' },
-23:40
-{ name: 'Мастер III', min: 3500, max: 3749, class: 'elo-master' },
+                { name: 'Мастер III', min: 3500, max: 3749, class: 'elo-master' },
                 { name: 'Мастер II', min: 3750, max: 3999, class: 'elo-master' },
                 { name: 'Мастер I', min: 4000, max: 4249, class: 'elo-master' },
                 { name: 'Грандмастер', min: 4250, max: 4499, class: 'elo-grandmaster' },
@@ -501,13 +542,13 @@ cursor: pointer;
             history: []
         };
 
-        function loadEloData() {
+        function loadElo() {
             const saved = localStorage.getItem('hockeyElo');
             if (saved) eloData = JSON.parse(saved);
-            updateEloDisplay();
+            updateEloUI();
         }
 
-        function saveEloData() {
+        function saveElo() {
             localStorage.setItem('hockeyElo', JSON.stringify(eloData));
         }
 
@@ -525,9 +566,8 @@ cursor: pointer;
             return Math.max(-50, Math.min(50, change));
         }
 
-        function updateElo(won, matchStats) {
-            const result = won ? 1 : 0;
-            const change = calculateEloChange(eloData.current, ELO_CONFIG.BOT_ELO, result);
+        function updateElo(won, stats) {
+            const change = calculateEloChange(eloData.current, ELO_CONFIG.BOT_ELO, won ? 1 : 0);
             const oldElo = eloData.current;
             eloData.current = Math.max(0, Math.min(ELO_CONFIG.MAX_ELO, eloData.current + change));
             eloData.max = Math.max(eloData.max, eloData.current);
@@ -548,41 +588,29 @@ cursor: pointer;
                 score: `${gameState.playerScore}:${gameState.botScore}`,
                 eloChange: change,
                 eloAfter: eloData.current,
-                duration: matchStats.duration,
-                shots: matchStats.shots
+                duration: stats.duration,
+                shots: stats.shots
             });
             
             if (eloData.history.length > 50) eloData.history.pop();
-            saveEloData();
-            updateEloDisplay();
+            saveElo();
+            updateEloUI();
             return { change, oldElo };
         }
 
-        function updateEloDisplay() {
+        function updateEloUI() {
             const rank = getRank(eloData.current);
-            const progress = (eloData.current / ELO_CONFIG.MAX_ELO) * 100;
+            const pct = (eloData.current / ELO_CONFIG.MAX_ELO) * 100;
             
             document.getElementById('eloValue').textContent = eloData.current;
-            document.getElementById('eloRank').textContent = rank.name;
-            const progressEl = document.getElementById('eloProgress');
-            progressEl.className = `elo-progress ${rank.class}`;
-            progressEl.style.width = progress + '%';
-            
-            document.getElementById('totalWins').textContent = eloData.wins;
-            document.getElementById('totalLosses').textContent = eloData.losses;
-            
-            const total = eloData.wins + eloData.losses;
-            const winRate = total > 0 ? Math.round((eloData.wins / total) * 100) : 0;
-            document.getElementById('winRate').textContent = winRate + '%';
-            
-            const streakText = eloData.streak > 0 ? `+${eloData.streak}` : eloData.streak;
-23:40
-const streakEl = document.getElementById('streak');
-            streakEl.textContent = streakText;
-            streakEl.style.color = eloData.streak > 0 ? '#4ecdc4' : eloData.streak < 0 ? '#ff6b6b' : '#fff';
+07:23
+document.getElementById('eloRank').textContent = rank.name;
+            const bar = document.getElementById('eloProgress');
+            bar.className = `elo-progress ${rank.class}`;
+            bar.style.width = pct + '%';
         }
 
-        // Game constants
+        // Игра
         const GAME_DURATION = 180;
         const WIN_SCORE = 5;
         const FRICTION = 0.985;
@@ -591,36 +619,49 @@ const streakEl = document.getElementById('streak');
         let gameState = {
             running: false,
             paused: false,
-            period: 1,
             timeRemaining: GAME_DURATION,
             playerScore: 0,
             botScore: 0,
             shots: 0,
-            possession: 50,
             startTime: null
         };
 
-        let puck = { x: 0, y: 0, vx: 0, vy: 0, radius: 12, color: '#333' };
-        let player = { x: 0, y: 0, radius: 25, color: '#4ecdc4', targetX: 0, targetY: 0 };
-        let bot = { x: 0, y: 0, radius: 25, color: '#ff6b6b', speed: 4, state: 'defense' };
+        let puck = { x: 0, y: 0, vx: 0, vy: 0, radius: 10, color: '#fff' };
+        let player = { x: 0, y: 0, radius: 22, color: '#4ecdc4', targetX: 0, targetY: 0 };
+        let bot = { x: 0, y: 0, radius: 22, color: '#ff6b6b', speed: 3.5 };
 
-        // УЛУЧШЕННАЯ ОБРАБОТКА ВВОДА
-        let touchId = null;
+        function resetPositions() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            
+            puck.x = cx;
+            puck.y = cy;
+            puck.vx = 0;
+            puck.vy = 0;
+            
+            player.x = cx;
+            player.y = canvas.height - 60;
+            player.targetX = player.x;
+            player.targetY = player.y;
+            
+            bot.x = cx;
+            bot.y = 60;
+        }
 
-        function getCanvasPos(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
+        // ========== ОБРАБОТКА ВВОДА - ГЛАВНЫЙ ФИКС ==========
+        
+        function getPos(clientX, clientY) {
+            const rect = container.getBoundingClientRect();
             return {
-                x: (clientX - rect.left) * scaleX,
-                y: (clientY - rect.top) * scaleY
+                x: clientX - rect.left,
+                y: clientY - rect.top
             };
         }
 
-        function updatePlayerTarget(x, y) {
-            // Ограничение зоны игрока (только нижняя половина)
+        function setPlayerTarget(x, y) {
+            // Ограничение: только нижняя половина
             const minY = canvas.height / 2 + player.radius;
-            const maxY = canvas.height - player.radius - 10;
+            const maxY = canvas.height - player.radius - 5;
             const minX = player.radius;
             const maxX = canvas.width - player.radius;
             
@@ -628,172 +669,117 @@ const streakEl = document.getElementById('streak');
             player.targetY = Math.max(minY, Math.min(maxY, y));
         }
 
-        // Touch events с захватом указателя
-        canvas.addEventListener('touchstart', function(e) {
+        let isTouching = false;
+
+        // Обработчики на touchLayer (не на canvas!)
+        touchLayer.addEventListener('touchstart', function(e) {
             e.preventDefault();
-            debugInfo.textContent = 'Touch START detected';
+            e.stopPropagation();
+            
+            log('TOUCH start');
             
             if (!gameState.running) {
                 startGame();
                 return;
             }
             
-            const touch = e.changedTouches[0];
-            touchId = touch.identifier;
-            const pos = getCanvasPos(touch.clientX, touch.clientY);
-            updatePlayerTarget(pos.x, pos.y);
-        }, {passive: false});
-
-        canvas.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-            if (!gameState.running || touchId === null) return;
+            isTouching = true;
+            const t = e.touches[0];
+            const pos = getPos(t.clientX, t.clientY);
+            setPlayerTarget(pos.x, pos.y);
             
-            for (let i = 0; i < e.changedTouches.length; i++) {
-                if (e.changedTouches[i].identifier === touchId) {
-                    const pos = getCanvasPos(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
-                    updatePlayerTarget(pos.x, pos.y);
-                    debugInfo.textContent = `Touch move: ${Math.round(pos.x)},${Math.round(pos.y)}`;
-                    break;
-                }
-            }
-        }, {passive: false});
+        }, {passive: false, capture: true});
 
-        canvas.addEventListener('touchend', function(e) {
+        touchLayer.addEventListener('touchmove', function(e) {
             e.preventDefault();
-            for (let i = 0; i < e.changedTouches.length; i++) {
-                if (e.changedTouches[i].identifier === touchId) {
-                    touchId = null;
-                    debugInfo.textContent = 'Touch END';
-                    break;
-                }
-            }
-        }, {passive: false});
-
-        canvas.addEventListener('touchcancel', function(e) {
-            touchId = null;
-            debugInfo.textContent = 'Touch CANCEL';
-        }, {passive: false});
-
-        // Mouse events для тестирования на ПК
-        let isMouseDown = false;
-        
-        canvas.addEventListener('mousedown', function(e) {
-            e.preventDefault();
-            isMouseDown = true;
-            debugInfo.textContent = 'Mouse DOWN';
+            e.stopPropagation();
             
-            if (!gameState.running) {
-                startGame();
-                return;
-            }
-23:40
-const pos = getCanvasPos(e.clientX, e.clientY);
-            updatePlayerTarget(pos.x, pos.y);
-        });
+            if (!gameState.running || !isTouching) return;
+            
+            const t = e.touches[0];
+            const pos = getPos(t.clientX, t.clientY);
+            setPlayerTarget(pos.x, pos.y);
+            
+        }, {passive: false, capture: true});
 
-        canvas.addEventListener('mousemove', function(e) {
-            if (!isMouseDown || !gameState.running) return;
+        touchLayer.addEventListener('touchend', function(e) {
             e.preventDefault();
-            const pos = getCanvasPos(e.clientX, e.clientY);
-            updatePlayerTarget(pos.x, pos.y);
-            debugInfo.textContent = `Mouse move: ${Math.round(pos.x)},${Math.round(pos.y)}`;
-        });
+            isTouching = false;
+            log('TOUCH end');
+        }, {passive: false, capture: true});
 
-        canvas.addEventListener('mouseup', function(e) {
-            isMouseDown = false;
-            debugInfo.textContent = 'Mouse UP';
-        });
+        touchLayer.addEventListener('touchcancel', function(e) {
+            isTouching = false;
+            log('TOUCH cancel');
+        }, {passive: false, capture: true});
 
-        canvas.addEventListener('mouseleave', function(e) {
-            isMouseDown = false;
-        });
-
-        // Pointer events (современный стандарт)
-        canvas.addEventListener('pointerdown', function(e) {
+        // Мышь для теста
+        touchLayer.addEventListener('mousedown', function(e) {
             e.preventDefault();
-            canvas.setPointerCapture(e.pointerId);
-            debugInfo.textContent = 'Pointer DOWN';
+            log('MOUSE down');
             
             if (!gameState.running) {
                 startGame();
                 return;
             }
             
-            const pos = getCanvasPos(e.clientX, e.clientY);
-            updatePlayerTarget(pos.x, pos.y);
+            isTouching = true;
+            const pos = getPos(e.clientX, e.clientY);
+            setPlayerTarget(pos.x, pos.y);
         });
 
-        canvas.addEventListener('pointermove', function(e) {
-            if (!gameState.running) return;
+        touchLayer.addEventListener('mousemove', function(e) {
+07:23
+if (!isTouching || !gameState.running) return;
             e.preventDefault();
-            const pos = getCanvasPos(e.clientX, e.clientY);
-            updatePlayerTarget(pos.x, pos.y);
+            const pos = getPos(e.clientX, e.clientY);
+            setPlayerTarget(pos.x, pos.y);
         });
 
-        canvas.addEventListener('pointerup', function(e) {
-            canvas.releasePointerCapture(e.pointerId);
-            debugInfo.textContent = 'Pointer UP';
+        touchLayer.addEventListener('mouseup', function(e) {
+            isTouching = false;
+            log('MOUSE up');
         });
 
-        // Клик для старта (запасной вариант)
-        canvas.addEventListener('click', function(e) {
-            debugInfo.textContent = 'CLICK detected';
+        touchLayer.addEventListener('mouseleave', function() {
+            isTouching = false;
+        });
+
+        // Клик как запасной вариант
+        touchLayer.addEventListener('click', function(e) {
+            log('CLICK');
             if (!gameState.running) startGame();
         });
 
-        function resetPositions() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            
-            puck.x = centerX;
-            puck.y = centerY;
-            puck.vx = 0;
-            puck.vy = 0;
-            
-            player.x = centerX;
-            player.y = canvas.height - 80;
-            player.targetX = player.x;
-            player.targetY = player.y;
-            
-            bot.x = centerX;
-            bot.y = 80;
-        }
-
+        // Физика
         function updatePlayer() {
             const dx = player.targetX - player.x;
             const dy = player.targetY - player.y;
-            player.x += dx * 0.15;
-            player.y += dy * 0.15;
+            player.x += dx * 0.2;
+            player.y += dy * 0.2;
         }
 
         function updateBot() {
-            const puckY = puck.y;
-            const centerX = canvas.width / 2;
+            const cx = canvas.width / 2;
             
-            if (puckY < canvas.height / 2) {
-                bot.state = (Math.abs(puck.vy) < 2 && puckY > 100) ? 'attack' : 'defense';
-            } else {
-                bot.state = 'return';
-            }
-
+            // Предсказание позиции шайбы
+            const predictX = puck.x + puck.vx * 3;
+            const predictY = puck.y + puck.vy * 3;
+            
             let targetX, targetY;
-
-            switch(bot.state) {
-                case 'attack':
-                    targetX = puck.x + puck.vx * 5;
-                    targetY = puck.y + 30;
-                    break;
-                case 'defense':
-                    const defendX = Math.max(50, Math.min(canvas.width - 50, puck.x + (puck.x - centerX) * 0.3));
-                    targetX = defendX;
-                    targetY = 80 + Math.abs(puck.x - centerX) * 0.1;
-                    break;
-                case 'return':
-                    targetX = centerX + (puck.x - centerX) * 0.3;
-                    targetY = 80;
-                    break;
+            
+            if (puck.y < canvas.height / 2 && puck.vy < 5) {
+                // Атака
+                targetX = predictX;
+                targetY = Math.min(predictY + 20, canvas.height/2 - 30);
+            } else {
+                // Защита ворот
+                const goalX = cx;
+                const defendX = goalX + (puck.x - goalX) * 0.4;
+                targetX = Math.max(40, Math.min(canvas.width - 40, defendX));
+                targetY = 50 + Math.abs(puck.x - cx) * 0.05;
             }
-
+            
             bot.x += (targetX - bot.x) * (bot.speed / 10);
             bot.y += (targetY - bot.y) * (bot.speed / 10);
             
@@ -803,8 +789,7 @@ const pos = getCanvasPos(e.clientX, e.clientY);
 
         function updatePuck() {
             puck.x += puck.vx;
-23:40
-puck.y += puck.vy;
+            puck.y += puck.vy;
             puck.vx *= FRICTION;
             puck.vy *= FRICTION;
             
@@ -814,6 +799,7 @@ puck.y += puck.vy;
                 puck.vy = (puck.vy / speed) * MAX_SPEED;
             }
             
+            // Стенки боковые
             if (puck.x - puck.radius < 0) {
                 puck.x = puck.radius;
                 puck.vx *= -0.8;
@@ -823,15 +809,17 @@ puck.y += puck.vy;
                 puck.vx *= -0.8;
             }
             
-            const goalWidth = 100;
-            const goalLeft = (canvas.width - goalWidth) / 2;
-            const goalRight = (canvas.width + goalWidth) / 2;
+            // Голы
+            const goalW = 80;
+            const goalL = (canvas.width - goalW) / 2;
+            const goalR = (canvas.width + goalW) / 2;
             
-            if (puck.y - puck.radius < 0 && puck.x > goalLeft && puck.x < goalRight) {
-                scoreGoal('player');
-            } else if (puck.y + puck.radius > canvas.height && puck.x > goalLeft && puck.x < goalRight) {
-                scoreGoal('bot');
+            if (puck.y < 0 && puck.x > goalL && puck.x < goalR) {
+                score('player');
+            } else if (puck.y > canvas.height && puck.x > goalL && puck.x < goalR) {
+                score('bot');
             } else {
+                // Отскок от верха/низа (не гол)
                 if (puck.y - puck.radius < 0) {
                     puck.y = puck.radius;
                     puck.vy *= -0.8;
@@ -842,57 +830,52 @@ puck.y += puck.vy;
                 }
             }
             
-            checkCollision(player);
-            checkCollision(bot);
+            checkHit(player);
+            checkHit(bot);
         }
 
-        function checkCollision(paddle) {
+        function checkHit(paddle) {
             const dx = puck.x - paddle.x;
             const dy = puck.y - paddle.y;
-            const distance = Math.sqrt(dx*dx + dy*dy);
+            const dist = Math.sqrt(dx*dx + dy*dy);
             const minDist = puck.radius + paddle.radius;
             
-            if (distance < minDist) {
-                const nx = dx / distance;
-                const ny = dy / distance;
-                const overlap = minDist - distance;
-                puck.x += nx * overlap;
+            if (dist < minDist) {
+                const nx = dx / dist;
+                const ny = dy / dist;
+                const overlap = minDist - dist;
+07:23
+puck.x += nx * overlap;
                 puck.y += ny * overlap;
                 
-                const paddleSpeed = Math.sqrt(
-                    Math.pow(paddle.x - (paddle.targetX || paddle.x), 2) +
-                    Math.pow(paddle.y - (paddle.targetY || paddle.y), 2)
-                ) * 0.5;
+                const speed = Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy);
+                const hitPower = 4;
                 
-                puck.vx = nx * (Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy) + paddleSpeed + 3);
-                puck.vy = ny * (Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy) + paddleSpeed + 3);
-                
-                if (Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy) > MAX_SPEED) {
-                    const scale = MAX_SPEED / Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy);
-                    puck.vx *= scale;
-                    puck.vy *= scale;
-                }
+                puck.vx = nx * (speed + hitPower);
+                puck.vy = ny * (speed + hitPower);
                 
                 if (paddle === player) {
                     gameState.shots++;
-                    updateStats();
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                    document.getElementById('shots').textContent = gameState.shots;
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                 }
             }
         }
 
-        function scoreGoal(scorer) {
-            if (scorer === 'player') {
+        function score(who) {
+            if (who === 'player') {
                 gameState.playerScore++;
-                showGoalMessage('ГОЛ! 🎉 ');
+                showMsg('ГОЛ! 🎉 ');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 gameState.botScore++;
-                showGoalMessage('БОТ ЗАБИЛ! 😤 ');
+                showMsg('БОТ ЗАБИЛ! 😤 ');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
             
-            updateScore();
+            document.getElementById('playerScore').textContent = gameState.playerScore;
+            document.getElementById('botScore').textContent = gameState.botScore;
+            
             resetPositions();
             
             if (gameState.playerScore >= WIN_SCORE || gameState.botScore >= WIN_SCORE) {
@@ -900,88 +883,86 @@ puck.y += puck.vy;
             }
         }
 
-        function showGoalMessage(text) {
-            const msg = document.getElementById('goalMessage');
-            msg.textContent = text;
-            msg.classList.remove('hidden');
-            msg.classList.add('show');
+        function showMsg(text) {
+            const el = document.getElementById('goalMessage');
+            el.textContent = text;
+            el.classList.remove('hidden');
+            el.classList.add('show');
             setTimeout(() => {
-23:40
-msg.classList.remove('show');
-                msg.classList.add('hidden');
+                el.classList.remove('show');
+                el.classList.add('hidden');
             }, 1500);
         }
 
         function draw() {
-            ctx.fillStyle = 'rgba(10, 22, 40, 0.3)';
+            // Очистка
+            ctx.fillStyle = 'rgba(10, 30, 50, 0.3)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            const centerX = canvas.width / 2;
+            const cx = canvas.width / 2;
             
-            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            // Линия центра
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
             ctx.lineWidth = 2;
-            ctx.setLineDash([10, 10]);
+            ctx.setLineDash([8, 8]);
             ctx.beginPath();
             ctx.moveTo(0, canvas.height/2);
             ctx.lineTo(canvas.width, canvas.height/2);
             ctx.stroke();
             ctx.setLineDash([]);
             
-            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-            ctx.lineWidth = 3;
+            // Центральный круг
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(centerX, canvas.height/2, 50, 0, Math.PI*2);
+            ctx.arc(cx, canvas.height/2, 40, 0, Math.PI*2);
             ctx.stroke();
             
-            const goalWidth = 100;
-            ctx.fillStyle = 'rgba(78, 205, 196, 0.3)';
-            ctx.fillRect((canvas.width - goalWidth)/2, canvas.height - 5, goalWidth, 5);
-            ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
-            ctx.fillRect((canvas.width - goalWidth)/2, 0, goalWidth, 5);
+            // Ворота
+            const goalW = 80;
+            ctx.fillStyle = 'rgba(78, 205, 196, 0.25)';
+            ctx.fillRect((canvas.width - goalW)/2, 0, goalW, 4);
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.25)';
+            ctx.fillRect((canvas.width - goalW)/2, canvas.height - 4, goalW, 4);
             
-            drawPaddle(player);
-            drawPaddle(bot);
+            // Игроки
+            drawCircle(player.x, player.y, player.radius, player.color);
+            drawCircle(bot.x, bot.y, bot.radius, bot.color);
             
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#fff';
-            ctx.fillStyle = puck.color;
-            ctx.beginPath();
-            ctx.arc(puck.x, puck.y, puck.radius, 0, Math.PI*2);
-            ctx.fill();
+            // Шайба
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(255,255,255,0.5)';
+            drawCircle(puck.x, puck.y, puck.radius, puck.color);
             ctx.shadowBlur = 0;
-            
-            ctx.fillStyle = '#666';
-            ctx.beginPath();
-            ctx.arc(puck.x - 3, puck.y - 3, 4, 0, Math.PI*2);
-            ctx.fill();
         }
 
-        function drawPaddle(paddle) {
+        function drawCircle(x, y, r, color) {
+            // Тень
             ctx.fillStyle = 'rgba(0,0,0,0.3)';
             ctx.beginPath();
-            ctx.arc(paddle.x + 3, paddle.y + 3, paddle.radius, 0, Math.PI*2);
+            ctx.arc(x + 2, y + 2, r, 0, Math.PI*2);
             ctx.fill();
             
-            const gradient = ctx.createRadialGradient(
-                paddle.x - 5, paddle.y - 5, 0,
-                paddle.x, paddle.y, paddle.radius
-            );
-            gradient.addColorStop(0, paddle.color);
-            gradient.addColorStop(1, paddle.color);
+            // Круг
+            const grad = ctx.createRadialGradient(x - r/3, y - r/3, 0, x, y, r);
+            grad.addColorStop(0, color);
+            grad.addColorStop(1, color);
             
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = grad;
             ctx.beginPath();
-            ctx.arc(paddle.x, paddle.y, paddle.radius, 0, Math.PI*2);
+            ctx.arc(x, y, r, 0, Math.PI*2);
             ctx.fill();
             
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
+            // Обводка
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+07:23
+ctx.lineWidth = 2;
             ctx.stroke();
         }
 
         let lastTime = Date.now();
 
-        function gameLoop() {
+        function loop() {
             if (!gameState.running || gameState.paused) return;
             
             updatePlayer();
@@ -989,52 +970,37 @@ msg.classList.remove('show');
             updatePuck();
             draw();
             
+            // Таймер
             if (Date.now() - lastTime > 1000) {
                 gameState.timeRemaining--;
-                updateTimer();
+                const m = Math.floor(gameState.timeRemaining / 60);
+                const s = gameState.timeRemaining % 60;
+                document.getElementById('timer').textContent = 
+                    `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
                 lastTime = Date.now();
+                
                 if (gameState.timeRemaining <= 0) endGame();
             }
             
-            requestAnimationFrame(gameLoop);
-        }
-
-        function updateScore() {
-            document.getElementById('playerScore').textContent = gameState.playerScore;
-            document.getElementById('botScore').textContent = gameState.botScore;
-        }
-
-        function updateTimer() {
-            const mins = Math.floor(gameState.timeRemaining / 60);
-            const secs = gameState.timeRemaining % 60;
-            document.getElementById('timer').textContent = 
-                `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        }
-
-        function updateStats() {
-            document.getElementById('shots').textContent = gameState.shots;
-            const total = gameState.playerScore + gameState.botScore;
-            const possession = total > 0 ? Math.round((gameState.playerScore / total) * 100) : 50;
-            document.getElementById('possession').textContent = possession + '%';
+            requestAnimationFrame(loop);
         }
 
         function startGame() {
-23:40
-document.getElementById('gameStatus').classList.add('hidden');
+            log('GAME START');
+            document.getElementById('gameStatus').classList.add('hidden');
             gameState.running = true;
             gameState.paused = false;
             gameState.startTime = Date.now();
             resetPositions();
             lastTime = Date.now();
-            gameLoop();
-            debugInfo.textContent = 'Game STARTED';
+            loop();
         }
 
         function pauseGame() {
             gameState.paused = !gameState.paused;
             if (!gameState.paused) {
                 lastTime = Date.now();
-                gameLoop();
+                loop();
             }
         }
 
@@ -1042,63 +1008,60 @@ document.getElementById('gameStatus').classList.add('hidden');
             gameState = {
                 running: false,
                 paused: false,
-                period: 1,
                 timeRemaining: GAME_DURATION,
                 playerScore: 0,
                 botScore: 0,
                 shots: 0,
-                possession: 50,
                 startTime: null
             };
             
             document.getElementById('gameOver').classList.remove('active');
             document.getElementById('gameStatus').classList.remove('hidden');
+            document.getElementById('playerScore').textContent = '0';
+            document.getElementById('botScore').textContent = '0';
+            document.getElementById('shots').textContent = '0';
+            document.getElementById('timer').textContent = '03:00';
             
-            updateScore();
-            updateTimer();
-            updateStats();
             resetPositions();
             draw();
-            touchId = null;
-            isMouseDown = false;
+            isTouching = false;
         }
 
         function endGame() {
             gameState.running = false;
             
             const won = gameState.playerScore > gameState.botScore;
-            const duration = Math.floor((Date.now() - gameState.startTime) / 1000);
-            const minutes = Math.floor(duration / 60);
-            const seconds = duration % 60;
+            const dur = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const m = Math.floor(dur / 60);
+            const s = dur % 60;
             
-            const matchStats = {
-                duration: `${minutes}:${seconds.toString().padStart(2,'0')}`,
+            const stats = {
+                duration: `${m}:${s.toString().padStart(2,'0')}`,
                 shots: gameState.shots,
                 goals: gameState.playerScore
             };
             
-            const eloResult = updateElo(won, matchStats);
+            const elo = updateElo(won, stats);
             
             document.getElementById('winnerText').textContent = won ? 'ПОБЕДА! 🏆' : 'ПОРАЖЕНИЕ 😔 ';
             document.getElementById('winnerText').className = 'winner-text ' + (won ? 'win' : 'lose');
             document.getElementById('finalScore').textContent = `${gameState.playerScore} : ${gameState.botScore}`;
             
-            const eloChangeEl = document.getElementById('eloChange');
-            const changeText = eloResult.change > 0 ? `+${eloResult.change}` : eloResult.change;
-            eloChangeEl.textContent = `${changeText} ELO (${eloData.current})`;
-            eloChangeEl.className = 'elo-change ' + (eloResult.change >= 0 ? 'positive' : 'negative');
+            const changeText = elo.change > 0 ? `+${elo.change}` : elo.change;
+            const changeEl = document.getElementById('eloChange');
+            changeEl.textContent = `${changeText} ELO`;
+            changeEl.className = 'elo-change ' + (elo.change >= 0 ? 'positive' : 'negative');
             
-            document.getElementById('matchDuration').textContent = matchStats.duration;
+            document.getElementById('matchDuration').textContent = stats.duration;
             document.getElementById('matchGoals').textContent = gameState.playerScore;
             document.getElementById('matchShots').textContent = gameState.shots;
-            const accuracy = gameState.shots > 0 ? Math.round((gameState.playerScore / gameState.shots) * 100) : 0;
-            document.getElementById('matchAccuracy').textContent = accuracy + '%';
             
             document.getElementById('gameOver').classList.add('active');
             
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred(won ? 'success' : 'error');
-            }
+07:23
+}
         }
 
         function toggleHistory() {
@@ -1112,26 +1075,25 @@ document.getElementById('gameStatus').classList.add('hidden');
             list.innerHTML = '';
             
             if (eloData.history.length === 0) {
-                list.innerHTML = '<div style="text-align:center;color:#888;padding:40px;">Нет матчей</div>';
+                list.innerHTML = '<div style="text-align:center;color:#888;padding:30px;">Нет матчей</div>';
                 return;
             }
             
-            eloData.history.slice(0, 20).forEach(match => {
-23:40
-const date = new Date(match.date);
-                const dateStr = `${date.getDate()}.${date.getMonth()+1} ${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}`;
+            eloData.history.slice(0, 15).forEach(m => {
+                const d = new Date(m.date);
+                const dateStr = `${d.getDate()}.${d.getMonth()+1}`;
                 
                 const item = document.createElement('div');
                 item.className = 'history-item';
                 item.innerHTML = `
                     <div>
-                        <div class="history-result ${match.result}">${match.result === 'win' ? 'ПОБЕДА' : 'ПОРАЖЕНИЕ'}</div>
-                        <div style="font-size:12px;color:#888;">${dateStr} • ${match.duration}</div>
+                        <div class="history-result ${m.result}">${m.result === 'win' ? 'ПОБЕДА' : 'ПОРАЖ'}</div>
+                        <div style="font-size:10px;color:#888;">${dateStr} • ${m.duration}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:20px;font-weight:700;">${match.score}</div>
-                        <div style="color:${match.eloChange >= 0 ? '#4ecdc4' : '#ff6b6b'}">
-                            ${match.eloChange >= 0 ? '+' : ''}${match.eloChange} → ${match.eloAfter}
+                        <div style="font-size:16px;font-weight:700;">${m.score}</div>
+                        <div style="font-size:11px;color:${m.eloChange >= 0 ? '#4ecdc4' : '#ff6b6b'}">
+                            ${m.eloChange >= 0 ? '+' : ''}${m.eloChange}
                         </div>
                     </div>
                 `;
@@ -1139,19 +1101,19 @@ const date = new Date(match.date);
             });
         }
 
-        // Инициализация
-        loadEloData();
+        // Старт
+        loadElo();
         setTimeout(() => {
-            resizeCanvas();
+            resize();
             resetPositions();
             draw();
-        }, 200);
-        updateTimer();
+            log('Ready! Touch the green area');
+        }, 300);
 
-        tg.MainButton.setText('🏒  Играть в хокей');
+        tg.MainButton.setText('🏒  Хокей');
         tg.MainButton.show();
     </script>
 </body>
 </html>
-23:40
+07:23
 Initial commit
