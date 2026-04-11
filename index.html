@@ -14,6 +14,8 @@
             box-sizing: border-box;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         body {
@@ -88,9 +90,10 @@
         
         .score-value {
             font-family: 'Lilita One', cursive;
-            font-size: 28px;
+            font-size: 32px;
             color: #ffd700;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            min-height: 40px;
         }
         
         .per-second {
@@ -102,9 +105,9 @@
         /* Зона клика */
         .click-zone {
             position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 15px auto;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,15 +116,16 @@
         
         .sirius-container {
             position: relative;
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
             cursor: pointer;
             transition: transform 0.1s;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+            z-index: 10;
         }
         
         .sirius-container:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
         }
         
         .sirius-container.clicked {
@@ -129,18 +133,19 @@
         }
         
         @keyframes bounce {
-            0% { transform: scale(1); }
+00:26
+0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-22:40
-.sirius-img {
+        
+        .sirius-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
-            pointer-events: none; /* Чтобы клики проходили через контейнер */
+            pointer-events: none;
         }
         
         /* Аура вокруг Сириуса */
@@ -149,12 +154,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 220px;
-            height: 220px;
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
             animation: pulse 2s infinite;
             pointer-events: none;
+            z-index: 1;
         }
         
         @keyframes pulse {
@@ -164,14 +170,14 @@
         
         /* Частицы */
         .particle {
-            position: absolute;
+            position: fixed;
             pointer-events: none;
             font-weight: 900;
-            font-size: 20px;
+            font-size: 24px;
             color: #ffd700;
             text-shadow: 0 0 10px rgba(255,215,0,0.8);
             animation: floatUp 1s ease-out forwards;
-            z-index: 100;
+            z-index: 1000;
         }
         
         @keyframes floatUp {
@@ -267,13 +273,13 @@
         }
         
         .upgrade-desc {
-            font-size: 11px;
+00:26
+font-size: 11px;
             color: #aaa;
         }
         
         .upgrade-cost {
-22:41
-background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             padding: 6px 12px;
             border-radius: 15px;
             font-weight: 900;
@@ -371,14 +377,14 @@ background: linear-gradient(135deg, #ff6b6b, #ee5a24);
         
         /* Эффект критического удара */
         .critical {
-            position: absolute;
+            position: fixed;
             font-family: 'Lilita One', cursive;
             font-size: 36px;
             color: #ff006e;
             text-shadow: 0 0 20px rgba(255,0,110,0.8);
             pointer-events: none;
             animation: criticalPop 0.8s ease-out forwards;
-            z-index: 200;
+            z-index: 2000;
             transform: translate(-50%, -50%);
         }
         
@@ -406,12 +412,12 @@ background: linear-gradient(135deg, #ff6b6b, #ee5a24);
         
         .combo.active {
             opacity: 1;
-            animation: comboPulse 0.5s infinite alternate;
+00:26
+animation: comboPulse 0.5s infinite alternate;
         }
         
         @keyframes comboPulse {
-22:41
-from { transform: scale(1); }
+            from { transform: scale(1); }
             to { transform: scale(1.1); }
         }
         
@@ -439,38 +445,14 @@ from { transform: scale(1); }
             transform: translate(-50%, -50%) scale(1.1);
         }
         
-        /* Адаптивность */
-        @media (max-width: 480px) {
-            .click-zone {
-                width: 180px;
-                height: 180px;
-            }
-            .sirius-container {
-                width: 140px;
-                height: 140px;
-            }
-            .aura {
-                width: 190px;
-                height: 190px;
-            }
-            .game-title {
-                font-size: 20px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .click-zone {
-                width: 160px;
-                height: 160px;
-            }
-            .sirius-container {
-                width: 120px;
-                height: 120px;
-            }
-            .aura {
-                width: 170px;
-                height: 170px;
-            }
+        /* Отладочная информация */
+        .debug {
+            position: fixed;
+            bottom: 5px;
+            left: 5px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            z-index: 9999;
         }
     </style>
 </head>
@@ -535,8 +517,7 @@ from { transform: scale(1); }
     </div>
     
     <!-- Магазин -->
-22:41
-<div class="shop-section">
+    <div class="shop-section">
         <div class="shop-header">
             <span style="font-size: 20px;">🛒 </span>
             <h2 class="shop-title">Улучшения</h2>
@@ -544,11 +525,20 @@ from { transform: scale(1); }
         <div class="upgrade-list" id="upgradeList"></div>
     </div>
 
+    <div class="debug" id="debug"></div>
+
     <script>
         // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        let tg;
+        try {
+            tg = window.Telegram.WebApp;
+            tg.expand();
+00:26
+tg.ready();
+        } catch(e) {
+            console.log('Telegram WebApp not available');
+            tg = { HapticFeedback: null };
+        }
         
         // Игра
         class SiriusClicker {
@@ -560,6 +550,7 @@ from { transform: scale(1); }
                 this.combo = 0;
                 this.comboTimer = null;
                 this.lastClickTime = 0;
+                this.criticalChance = 0;
                 
                 this.upgrades = [
                     {
@@ -592,7 +583,7 @@ from { transform: scale(1); }
                         baseCost: 500,
                         cost: 500,
                         level: 0,
-                        effect: () => { this.criticalChance = (this.criticalChance || 0) + 0.1; },
+                        effect: () => { this.criticalChance += 0.1; },
                         type: 'special'
                     },
                     {
@@ -648,10 +639,20 @@ from { transform: scale(1); }
                 this.setupEventListeners();
                 this.startAutoClick();
                 this.updateDisplay();
-22:41
-if (tg.HapticFeedback) {
+                
+                if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('light');
                 }
+                
+                // Отладка
+                this.log('Game initialized');
+00:26
+}
+            
+            log(msg) {
+                console.log(msg);
+                const debug = document.getElementById('debug');
+                if (debug) debug.textContent = msg;
             }
             
             createStars() {
@@ -671,20 +672,45 @@ if (tg.HapticFeedback) {
             setupEventListeners() {
                 const sirius = document.getElementById('sirius');
                 
-                // Обработка кликов и касаний
-                sirius.addEventListener('click', (e) => this.handleClick(e));
+                // Клик мышью
+                sirius.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.handleClick(e);
+                });
+                
+                // Касание пальцем
                 sirius.addEventListener('touchstart', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     const touch = e.touches[0];
                     this.handleClick({
                         clientX: touch.clientX,
                         clientY: touch.clientY,
-                        target: e.target
+                        preventDefault: () => {},
+                        stopPropagation: () => {}
                     });
+                }, {passive: false});
+                
+                // Двойное касание (предотвращение зума)
+                sirius.addEventListener('touchend', (e) => {
+                    e.preventDefault();
                 }, {passive: false});
             }
             
             handleClick(e) {
+                this.log('Click detected!');
+                
+                // Гарантированно получаем координаты
+                let x = e.clientX;
+                let y = e.clientY;
+                
+                // Если координаты не определены, используем центр экрана
+                if (!x || !y) {
+                    x = window.innerWidth / 2;
+                    y = window.innerHeight / 2;
+                }
+                
                 const now = Date.now();
                 
                 // Система комбо
@@ -701,23 +727,32 @@ if (tg.HapticFeedback) {
                 
                 // Критический удар
                 let isCritical = false;
-                if (this.criticalChance && Math.random() < this.criticalChance) {
+                if (this.criticalChance > 0 && Math.random() < this.criticalChance) {
                     damage *= 3;
                     isCritical = true;
-                    this.showCritical(e.clientX, e.clientY);
                 }
                 
                 damage = Math.floor(damage);
+                
+                // Добавляем очки
                 this.score += damage;
                 this.totalClicks++;
                 
+                this.log(`Damage: ${damage}, Total: ${this.score}`);
+                
                 // Визуальные эффекты
-                this.createParticle(e.clientX, e.clientY, damage, isCritical);
+                this.createParticle(x, y, damage, isCritical);
+                if (isCritical) {
+                    this.showCritical(x, y);
+                }
                 this.animateSirius();
                 
                 // Вибрация
                 if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred(isCritical ? 'heavy' : 'medium');
+                    try {
+                        tg.HapticFeedback.impactOccurred(isCritical ? 'heavy' : 'medium');
+00:26
+} catch(e) {}
                 }
                 
                 // Проверка достижений
@@ -749,8 +784,7 @@ if (tg.HapticFeedback) {
                 crit.textContent = 'CRITICAL!';
                 crit.style.left = x + 'px';
                 crit.style.top = y + 'px';
-22:41
-document.body.appendChild(crit);
+                document.body.appendChild(crit);
                 setTimeout(() => crit.remove(), 800);
             }
             
@@ -763,7 +797,7 @@ document.body.appendChild(crit);
                 
                 if (isCritical) {
                     particle.style.color = '#ff006e';
-                    particle.style.fontSize = '28px';
+                    particle.style.fontSize = '32px';
                 }
                 
                 document.body.appendChild(particle);
@@ -772,6 +806,8 @@ document.body.appendChild(crit);
             
             animateSirius() {
                 const sirius = document.getElementById('sirius');
+                sirius.classList.remove('clicked');
+                void sirius.offsetWidth; // Trigger reflow
                 sirius.classList.add('clicked');
                 setTimeout(() => sirius.classList.remove('clicked'), 300);
             }
@@ -786,7 +822,9 @@ document.body.appendChild(crit);
                     upgrade.effect();
                     
                     if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('success');
+                        try {
+                            tg.HapticFeedback.notificationOccurred('success');
+                        } catch(e) {}
                     }
                     
                     this.showNotification(`${upgrade.name} куплено!`);
@@ -801,7 +839,9 @@ document.body.appendChild(crit);
                     this.updateDisplay();
                 } else {
                     if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('error');
+                        try {
+                            tg.HapticFeedback.notificationOccurred('error');
+                        } catch(e) {}
                     }
                 }
             }
@@ -811,7 +851,8 @@ document.body.appendChild(crit);
                 list.innerHTML = '';
                 
                 this.upgrades.forEach((upgrade, index) => {
-                    const item = document.createElement('div');
+00:26
+const item = document.createElement('div');
                     item.className = 'upgrade-item ' + (this.score < upgrade.cost ? 'disabled' : '');
                     item.innerHTML = `
                         <div class="upgrade-icon">${upgrade.icon}</div>
@@ -841,8 +882,7 @@ document.body.appendChild(crit);
                             const rect = document.getElementById('sirius').getBoundingClientRect();
                             this.createParticle(
                                 rect.left + rect.width/2 + (Math.random() - 0.5) * 100,
-22:41
-rect.top + rect.height/2,
+                                rect.top + rect.height/2,
                                 this.autoClick,
                                 false
                             );
@@ -872,7 +912,9 @@ rect.top + rect.height/2,
                     el.classList.add('unlocked');
                     this.showNotification(`Достижение разблокировано! 🏆`);
                     if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('success');
+                        try {
+                            tg.HapticFeedback.notificationOccurred('success');
+                        } catch(e) {}
                     }
                 }
             }
@@ -885,7 +927,8 @@ rect.top + rect.height/2,
             }
             
             updateDisplay() {
-                document.getElementById('score').textContent = this.score.toLocaleString();
+                const scoreEl = document.getElementById('score');
+                scoreEl.textContent = this.score.toLocaleString();
                 document.getElementById('perSecond').textContent = `+${this.autoClick}/сек | Сила: ${this.clickPower}`;
                 this.renderUpgrades();
             }
@@ -898,70 +941,88 @@ rect.top + rect.height/2,
                     autoClick: this.autoClick,
                     upgrades: this.upgrades,
                     achievements: this.achievements,
-                    criticalChance: this.criticalChance || 0
-                };
+                    criticalChance: this.criticalChance
+00:26
+};
                 
-                localStorage.setItem('siriusClicker', JSON.stringify(data));
+                try {
+                    localStorage.setItem('siriusClicker', JSON.stringify(data));
+                } catch(e) {}
                 
                 if (tg.CloudStorage) {
-                    tg.CloudStorage.setItem('gameData', JSON.stringify(data));
+                    try {
+                        tg.CloudStorage.setItem('gameData', JSON.stringify(data));
+                    } catch(e) {}
                 }
                 
                 this.showNotification('Прогресс сохранён! 💾 ');
                 if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
+                    try {
+                        tg.HapticFeedback.notificationOccurred('success');
+                    } catch(e) {}
                 }
             }
             
             loadProgress() {
-                const saved = localStorage.getItem('siriusClicker');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    this.score = data.score || 0;
-                    this.totalClicks = data.totalClicks || 0;
-                    this.clickPower = data.clickPower || 1;
-                    this.autoClick = data.autoClick || 0;
-                    this.criticalChance = data.criticalChance || 0;
-                    
-                    if (data.upgrades) {
-                        data.upgrades.forEach((u, i) => {
-                            if (this.upgrades[i]) {
-                                this.upgrades[i].level = u.level;
-                                this.upgrades[i].cost = u.cost;
-                            }
-                        });
+                try {
+                    const saved = localStorage.getItem('siriusClicker');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        this.score = data.score || 0;
+                        this.totalClicks = data.totalClicks || 0;
+                        this.clickPower = data.clickPower || 1;
+                        this.autoClick = data.autoClick || 0;
+                        this.criticalChance = data.criticalChance || 0;
+                        
+                        if (data.upgrades) {
+                            data.upgrades.forEach((u, i) => {
+                                if (this.upgrades[i]) {
+                                    this.upgrades[i].level = u.level;
+                                    this.upgrades[i].cost = u.cost;
+                                }
+                            });
+                        }
+                        
+                        if (data.achievements) {
+                            Object.keys(data.achievements).forEach(key => {
+                                if (data.achievements[key]) {
+                                    this.achievements[key] = true;
+                                    const el = document.querySelector(`[data-id="${key}"]`);
+                                    if (el) el.classList.add('unlocked');
+                                }
+                            });
+                        }
                     }
-                    
-                    if (data.achievements) {
-                        Object.keys(data.achievements).forEach(key => {
-                            if (data.achievements[key]) {
-22:41
-this.achievements[key] = true;
-                                const el = document.querySelector(`[data-id="${key}"]`);
-                                if (el) el.classList.add('unlocked');
-                            }
-                        });
-                    }
-                }
+                } catch(e) {}
             }
             
             reset() {
                 if (confirm('Сбросить весь прогресс?')) {
-                    localStorage.removeItem('siriusClicker');
+                    try {
+                        localStorage.removeItem('siriusClicker');
+                    } catch(e) {}
                     location.reload();
                 }
             }
         }
         
-        const game = new SiriusClicker();
+        // Запуск игры после загрузки DOM
+        let game;
+        document.addEventListener('DOMContentLoaded', () => {
+            game = new SiriusClicker();
+        });
         
+        // Автосохранение
         setInterval(() => {
-            game.saveProgress();
+            if (game) game.saveProgress();
         }, 30000);
         
-        tg.onEvent('viewportChanged', () => {
-            game.saveProgress();
-        });
+        // Сохранение при сворачивании
+        if (tg && tg.onEvent) {
+            tg.onEvent('viewportChanged', () => {
+                if (game) game.saveProgress();
+            });
+        }
     </script>
 </body>
 </html>
