@@ -2,1118 +2,949 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>🏒  Хокей Бот</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sirius Clicker - Brawl Stars</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;900&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
-            touch-action: none;
         }
-
-        html, body {
-            position: fixed;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(180deg, #0a1628 0%, #1a3a5c 50%, #0d2137 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #fff;
-        }
-
-        /* Фиксированная шапка */
-        .header {
-            width: 100%;
-            padding: 8px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.3);
-            flex-shrink: 0;
-        }
-
-        .player-info { text-align: center; }
-        .player-name { font-size: 10px; color: #888; }
-        .player-score { font-size: 24px; font-weight: 800; }
-        .player-info.bot .player-score { color: #ff6b6b; }
-        .player-info.you .player-score { color: #4ecdc4; }
-        .vs { font-size: 14px; color: #e94560; }
-
-        /* ELO компактный */
-        .elo-section {
-            width: 100%;
-            padding: 5px 10px;
-            background: rgba(0,0,0,0.2);
-            flex-shrink: 0;
-        }
-
-        .elo-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .elo-label { font-size: 10px; color: #ffd700; min-width: 35px; }
         
-        .elo-progress-container {
-            flex: 1;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .elo-progress {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .elo-bronze { background: linear-gradient(90deg, #cd7f32, #e8a87c); }
-        .elo-silver { background: linear-gradient(90deg, #c0c0c0, #e8e8e8); }
-        .elo-gold { background: linear-gradient(90deg, #ffd700, #ffed4e); }
-        .elo-platinum { background: linear-gradient(90deg, #3eb489, #7fffd4); }
-        .elo-diamond { background: linear-gradient(90deg, #00bfff, #87ceeb); }
-        .elo-master { background: linear-gradient(90deg, #9370db, #dda0dd); }
-        .elo-grandmaster { background: linear-gradient(90deg, #ff4500, #ff6347); }
-        .elo-legend { background: linear-gradient(90deg, #dc143c, #ff1493); }
-
-        .elo-value { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
-        .elo-rank { text-align: center; font-size: 9px; color: #888; margin-top: 2px; }
-        .elo-rank span { color: #ffd700; }
-
-        /* ИГРОВОЕ ПОЛЕ - ГЛАВНЫЙ ФИКС */
-        .game-wrapper {
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
             position: relative;
+        }
+        
+        /* Звёздный фон */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            flex: 1;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Шапка */
+        .header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+            padding: 15px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-family: 'Lilita One', cursive;
+            font-size: 28px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        /* Счётчик */
+        .score-container {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin: 10px auto;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .score-value {
+            font-family: 'Lilita One', cursive;
+            font-size: 36px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        
+        .per-second {
+            font-size: 14px;
+            color: #4ecdc4;
+            margin-top: 5px;
+        }
+        
+        /* Зона клика */
+        .click-zone {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px;
-            min-height: 0;
-        }
-
-        .game-container {
-            position: relative;
-            width: 100%;
-            max-width: 350px;
-            height: 100%;
-            max-height: 525px;
-        }
-
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-07:23
-background: rgba(10, 30, 50, 0.5);
-            touch-action: none;
-            -webkit-user-drag: none;
-        }
-
-        /* Невидимый оверлей для захвата касаний */
-        .touch-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             z-index: 5;
-            touch-action: none;
         }
-
-        .timer {
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: monospace;
-            z-index: 10;
-            pointer-events: none;
+        
+        .sirius-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
         }
-
-        .game-status {
+        
+        .sirius-container:active {
+            transform: scale(0.95);
+        }
+        
+        .sirius-container.clicked {
+            animation: bounce 0.3s ease;
+        }
+        
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+21:51
+.sirius-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+        }
+        
+        /* Аура вокруг Сириуса */
+        .aura {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 20;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
+            animation: pulse 2s infinite;
             pointer-events: none;
         }
-
-        .status-text {
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-            animation: pulse 1.5s infinite;
-            line-height: 1.3;
-        }
-
+        
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
         }
-
-        .hidden { display: none !important; }
-
-        .goal-message {
+        
+        /* Частицы */
+        .particle {
             position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #000;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 800;
-            z-index: 30;
-            transition: transform 0.3s ease;
             pointer-events: none;
+            font-weight: 900;
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.8);
+            animation: floatUp 1s ease-out forwards;
+            z-index: 100;
         }
-
-        .goal-message.show { transform: translate(-50%, -50%) scale(1); }
-
-        /* Статистика */
-        .match-stats {
-            display: flex;
-            gap: 15px;
-            padding: 5px;
-            font-size: 10px;
-            color: #888;
-            flex-shrink: 0;
+        
+        @keyframes floatUp {
+            0% { 
+                transform: translateY(0) scale(1); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(-100px) scale(1.5); 
+                opacity: 0; 
+            }
         }
-
-        .match-stat-value { font-size: 14px; font-weight: 700; color: #fff; }
-
-        /* Управление */
-        .controls {
-            width: 100%;
-            padding: 8px;
+ }
+        }
+        
+        /* Магазин улучшений */
+        .shop-section {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
+            border-radius: 30px 30px 0 0;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 300px;
+        }
+        
+        .shop-header {
             display: flex;
+            align-items: center;
             justify-content: center;
             gap: 10px;
-            flex-shrink: 0;
+            margin-bottom: 20px;
         }
-
-        .control-btn {
-            background: linear-gradient(135deg, #e94560, #c73e54);
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 18px;
-            font-weight: 700;
-            font-size: 12px;
+        
+        .shop-title {
+            font-family: 'Lilita One', cursive;
+            font-size: 24px;
+            color: #ffd700;
+        }
+        
+        .upgrade-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .upgrade-item {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             cursor: pointer;
-            touch-action: manipulation;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-
-        .control-btn.secondary { background: rgba(255,255,255,0.15); }
-
-        /* Модальные окна */
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            display: none;
+        
+        .upgrade-item:hover {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+            border-color: #ffd700;
+            transform: translateX(5px);
+        }
+        
+        .upgrade-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .upgrade-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 12px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            z-index: 100;
-            padding: 15px;
+            font-size: 24px;
+            flex-shrink: 0;
         }
-
-        .game-over.active { display: flex; }
-
-        .winner-text { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
-        .winner-text.win { color: #4ecdc4; }
-        .winner-text.lose { color: #ff6b6b; }
-
-        .final-score { font-size: 42px; font-weight: 800; margin-bottom: 10px; }
-
-        .elo-change {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            padding: 8px 20px;
-            border-radius: 20px;
+        
+        .upgrade-info {
+            flex: 1;
         }
-
-        .elo-change.positive { background: rgba(0,255,0,0.2); color: #00ff00; }
-07:23
-.elo-change.negative { background: rgba(255,0,0,0.2); color: #ff4444; }
-
-        .match-summary {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 280px;
-            font-size: 13px;
+        
+        .upgrade-name {
+            font-weight: 900;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 3px;
         }
-
-        .summary-row {
+        
+        .upgrade-desc {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .upgrade-cost {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            padding: 8px 15px;
+21:51
+border-radius: 20px;
+            font-weight: 900;
+            font-size: 14px;
             display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .summary-row:last-child { border-bottom: none; }
-        .summary-label { color: #888; }
-        .summary-value { font-weight: 700; color: #fff; }
-
-        /* Кнопки */
-        .history-btn {
-            position: fixed;
-            top: 5px;
-            right: 5px;
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 50;
-            touch-action: manipulation;
-        }
-
-        .history-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            z-index: 200;
-            overflow-y: auto;
-            padding: 50px 15px 15px;
-        }
-
-        .history-modal.active { display: block; }
-
-        .history-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; text-align: center; }
-
-        .history-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            gap: 5px;
         }
-
-        .history-result { font-weight: 700; font-size: 14px; }
-        .history-result.win { color: #4ecdc4; }
-        .history-result.lose { color: #ff6b6b; }
-
-        .close-history {
-            position: fixed;
+        
+        .upgrade-level {
+            position: absolute;
             top: 5px;
-            right: 5px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 201;
+            right: 10px;
+            font-size: 12px;
+            color: #4ecdc4;
+            font-weight: 700;
         }
-
-        /* Отладка */
-        .debug-panel {
+        
+        /* Достижения */
+        .achievements {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
+        
+        .achievement {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+            min-width: 80px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .achievement.unlocked {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.2);
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.5); }
+            50% { box-shadow: 0 0 20px rgba(255,215,0,0.8); }
+        }
+        
+        .achievement-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-name {
+            font-size: 10px;
+            color: #aaa;
+        }
+        
+        /* Кнопки управления */
+        .controls {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        /* Эффект критического удара */
+        .critical {
+            position: absolute;
+            font-family: 'Lilita One', cursive;
+            font-size: 48px;
+            color: #ff006e;
+            text-shadow: 0 0 20px rgba(255,0,110,0.8);
+            pointer-events: none;
+            animation: criticalPop 0.8s ease-out forwards;
+            z-index: 200;
+            transform: translate(-50%, -50%);
+        }
+        
+        @keyframes criticalPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.5) rotate(10deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg) translateY(-150px); opacity: 0; }
+        }
+        
+        /* Комбо система */
+        .combo {
             position: fixed;
-            bottom: 2px;
-            left: 2px;
-            background: rgba(0,0,0,0.8);
-            color: #0f0;
-            font-family: monospace;
-            font-size: 9px;
-            padding: 4px 6px;
-            border-radius: 4px;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(255,0,110,0.9), rgba(255,0,110,0.6));
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Lilita One', cursive;
+            font-size: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 50;
+            border: 2px solid #ff006e;
+        }
+        
+        .combo.active {
+            opacity: 1;
+            animation: comboPulse 0.5s infinite alternate;
+        }
+        
+        @keyframes comboPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        /* Уведомление */
+21:51
+.notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a0a2e;
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-family: 'Lilita One', cursive;
+            font-size: 24px;
             z-index: 1000;
-            max-width: 150px;
-            line-height: 1.3;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            box-shadow: 0 0 50px rgba(255,215,0,0.5);
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 480px) {
+            .click-zone {
+                width: 240px;
+                height: 240px;
+            }
+            .sirius-container {
+                width: 200px;
+                height: 200px;
+            }
+            .game-title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <button class="history-btn" onclick="toggleHistory()">📊 </button>
-
+    <!-- Звёздный фон -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Комбо счётчик -->
+    <div class<div class="combo" id="combo">COMBO x<span id="comboValue">1</span></div>
+    
+    <!-- Уведомления -->
+    <div class="notification" id="notification"></div>
+    
     <div class="header">
-        <div class="player-info you">
-            <div class="player-name">ВЫ</div>
-            <div class="player-score" id="playerScore">0</div>
-        </div>
-        <div class="vs">VS</div>
-        <div class="player-info bot">
-            <div class="player-name">БОТ</div>
-            <div class="player-score" id="botScore">0</div>
+        <h1 class="game-title">⭐ SIRIUS CLICKER ⭐</h1>
+        <div class="score-container">
+            <div class="score-label">Звёздная энергия</div>
+            <div class="score-value" id="score">0</div>
+            <div class="per-second" id="perSecond">+0/сек</div>
         </div>
     </div>
-
-    <div class="elo-section">
-        <div class="elo-bar">
-            <div class="elo-label">ELO</div>
-            <div class="elo-progress-container">
-                <div class="elo-progress elo-bronze" id="eloProgress" style="width: 20%"></div>
-            </div>
-            <div class="elo-value" id="eloValue">1000</div>
+    
+    <!-- Достижения -->
+    <div class="achievements" id="achievements">
+        <div class="achievement unlocked" data-id="start">
+            <div class="achievement-icon">🌟 </div>
+            <div class="achievement-name">Начало</div>
         </div>
-        <div class="elo-rank">Ранг: <span id="eloRank">Бронза III</span></div>
-    </div>
-
-    <!-- ОБЁРТКА ИГРЫ -->
-    <div class="game-wrapper">
-        <div class="game-container" id="gameContainer">
-            <canvas id="gameCanvas"></canvas>
-            
-            <!-- НЕВИДИМЫЙ СЛОЙ ДЛЯ КАСАНИЙ -->
-07:23
-<div class="touch-layer" id="touchLayer"></div>
-            
-            <div class="timer" id="timer">03:00</div>
-            
-            <div class="game-status" id="gameStatus">
-                <div class="status-text">ТАПНИТЕ<br>ДЛЯ СТАРТА</div>
-            </div>
-
-            <div class="goal-message hidden" id="goalMessage">ГОЛ! 🏒 </div>
+        <div class="achievement" data-id="100clicks">
+            <div class="achievement-icon">👆</div>
+            <div class="achievement-name">100 кликов</div>
+        </div>
+        <div class="achievement" data-id="1000stars">
+            <div class="achievement-icon">💫 </div>
+            <div class="achievement-name">1000 звёзд</div>
+        </div>
+        <div class="achievement" data-id="firstUpgrade">
+            <div class="achievement-icon">⬆️ </div>
+            <div class="achievement-name">Первое улучшение</div>
+        </div>
+        <div class="achievement" data-id="master">
+            <div class="achievement-icon">👑 </div>
+            <div class="achievement-name">Мастер</div>
         </div>
     </div>
-
-    <div class="match-stats">
-        <div class="match-stat">
-            <div>Период</div>
-            <div class="match-stat-value" id="period">1/3</div>
-        </div>
-        <div class="match-stat">
-            <div>Владение</div>
-            <div class="match-stat-value" id="possession">50%</div>
-        </div>
-        <div class="match-stat">
-            <div>Удары</div>
-            <div class="match-stat-value" id="shots">0</div>
+    
+    <!-- Зона клика -->
+    <div class="click-zone">
+        <div class="aura"></div>
+        <div class="sirius-container" id="sirius">
+            <img src="https://kimi-web-img.moonshot.cn/img/static.wikia.nocookie.net/1324b6528aca968c28e488e139f7a9b9527cdb5d" 
+                 alt="Sirius" 
+                 class="sirius-img"
+                 onerror="this.src='https://kimi-web-img.moonshot.cn/img/static.wikia.nocookie.net/b0d8dbe3c7b7487d8e88eeb319c1203cf58af81d'">
         </div>
     </div>
-
+    
+    <!-- Управление -->
     <div class="controls">
-        <button class="control-btn secondary" onclick="pauseGame()">⏸ ПАУЗА</button>
-        <button class="control-btn" onclick="resetGame()">🔄  НОВАЯ</button>
+        <button class="btn" onclick="game.saveProgress()">💾  Сохранить</button>
+        <button class="btn btn-secondary" onclick="game.reset()">🔄  Сброс</button>
     </div>
-
-    <div class="game-over" id="gameOver">
-        <div class="winner-text" id="winnerText">ПОБЕДА!</div>
-        <div class="final-score" id="finalScore">5 : 3</div>
-        <div class="elo-change" id="eloChange">+25 ELO</div>
-        
-        <div class="match-summary">
-            <div class="summary-row">
-                <span class="summary-label">Время</span>
-                <span class="summary-value" id="matchDuration">2:45</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Голы</span>
-                <span class="summary-value" id="matchGoals">5</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Удары</span>
-                <span class="summary-value" id="matchShots">12</span>
-            </div>
+    
+    <!-- Магазин -->
+    <div class="shop-section">
+        <div class="shop-header">
+            <span style="font-size: 24px;">🛒 </span>
+            <h2 class="shop-title">Улучшения</h2>
         </div>
-        
-        <button class="control-btn" onclick="resetGame()">ИГРАТЬ СНОВА</button>
+        <div class="upgrade-list" id="upgradeList"></div>
     </div>
-
-    <div class="history-modal" id="historyModal">
-        <button class="close-history" onclick="toggleHistory()">✕</button>
-        <div class="history-title">📊  История</div>
-        <div id="historyList"></div>
-    </div>
-
-    <div class="debug-panel" id="debug">Init...</div>
 
     <script>
-        // Telegram
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
-
-        const debug = document.getElementById('debug');
-        function log(msg) {
-            debug.innerHTML = msg + '<br>' + debug.innerHTML.substring(0, 100);
-            console.log(msg);
-        }
-
-        // Canvas
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const touchLayer = document.getElementById('touchLayer');
-        const container = document.getElementById('gameContainer');
-
-        // Размеры canvas
-        function resize() {
-            const rect = container.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            log(`Resize: ${canvas.width}x${canvas.height}`);
-            if (!gameState.running) draw();
-        }
-
-        // Ждём загрузки
-        window.addEventListener('load', () => {
-            setTimeout(resize, 100);
-            setTimeout(resize, 500);
-        });
-        window.addEventListener('resize', resize);
-
-        // ELO
-        const ELO_CONFIG = {
-            MAX_ELO: 5000,
-            START_ELO: 1000,
-            K_FACTOR_BASE: 32,
-            BOT_ELO: 1200,
-            RANKS: [
-                { name: 'Бронза III', min: 0, max: 1099, class: 'elo-bronze' },
-                { name: 'Бронза II', min: 1100, max: 1199, class: 'elo-bronze' },
-                { name: 'Бронза I', min: 1200, max: 1299, class: 'elo-bronze' },
-                { name: 'Серебро III', min: 1300, max: 1399, class: 'elo-silver' },
-                { name: 'Серебро II', min: 1400, max: 1499, class: 'elo-silver' },
-07:23
-{ name: 'Серебро I', min: 1500, max: 1599, class: 'elo-silver' },
-                { name: 'Золото III', min: 1600, max: 1799, class: 'elo-gold' },
-                { name: 'Золото II', min: 1800, max: 1999, class: 'elo-gold' },
-                { name: 'Золото I', min: 2000, max: 2199, class: 'elo-gold' },
-                { name: 'Платина III', min: 2200, max: 2399, class: 'elo-platinum' },
-                { name: 'Платина II', min: 2400, max: 2599, class: 'elo-platinum' },
-                { name: 'Платина I', min: 2600, max: 2799, class: 'elo-platinum' },
-                { name: 'Алмаз III', min: 2800, max: 2999, class: 'elo-diamond' },
-                { name: 'Алмаз II', min: 3000, max: 3199, class: 'elo-diamond' },
-                { name: 'Алмаз I', min: 3200, max: 3499, class: 'elo-diamond' },
-                { name: 'Мастер III', min: 3500, max: 3749, class: 'elo-master' },
-                { name: 'Мастер II', min: 3750, max: 3999, class: 'elo-master' },
-                { name: 'Мастер I', min: 4000, max: 4249, class: 'elo-master' },
-                { name: 'Грандмастер', min: 4250, max: 4499, class: 'elo-grandmaster' },
-                { name: 'Легенда', min: 4500, max: 5000, class: 'elo-legend' }
-            ]
-        };
-
-        let eloData = {
-            current: ELO_CONFIG.START_ELO,
-            max: ELO_CONFIG.START_ELO,
-            wins: 0,
-            losses: 0,
-            streak: 0,
-            maxStreak: 0,
-            history: []
-        };
-
-        function loadElo() {
-            const saved = localStorage.getItem('hockeyElo');
-            if (saved) eloData = JSON.parse(saved);
-            updateEloUI();
-        }
-
-        function saveElo() {
-            localStorage.setItem('hockeyElo', JSON.stringify(eloData));
-        }
-
-        function getRank(elo) {
-            return ELO_CONFIG.RANKS.find(r => elo >= r.min && elo <= r.max) || ELO_CONFIG.RANKS[0];
-        }
-
-        function calculateEloChange(playerElo, opponentElo, result) {
-            const expected = 1 / (1 + Math.pow(10, (opponentElo - playerElo) / 400));
-            let k = ELO_CONFIG.K_FACTOR_BASE;
-            if (playerElo > 2400) k = 16;
-            else if (playerElo > 2000) k = 24;
-            if (eloData.streak >= 3) k *= 1.1;
-            const change = Math.round(k * (result - expected));
-            return Math.max(-50, Math.min(50, change));
-        }
-
-        function updateElo(won, stats) {
-            const change = calculateEloChange(eloData.current, ELO_CONFIG.BOT_ELO, won ? 1 : 0);
-            const oldElo = eloData.current;
-            eloData.current = Math.max(0, Math.min(ELO_CONFIG.MAX_ELO, eloData.current + change));
-            eloData.max = Math.max(eloData.max, eloData.current);
-            
-            if (won) {
-                eloData.wins++;
-                eloData.streak = eloData.streak > 0 ? eloData.streak + 1 : 1;
-            } else {
-                eloData.losses++;
-                eloData.streak = eloData.streak < 0 ? eloData.streak - 1 : -1;
-            }
-            
-            eloData.maxStreak = Math.max(eloData.maxStreak, Math.abs(eloData.streak));
-            
-            eloData.history.unshift({
-                date: new Date().toISOString(),
-                result: won ? 'win' : 'loss',
-                score: `${gameState.playerScore}:${gameState.botScore}`,
-                eloChange: change,
-                eloAfter: eloData.current,
-                duration: stats.duration,
-                shots: stats.shots
-            });
-            
-            if (eloData.history.length > 50) eloData.history.pop();
-            saveElo();
-            updateEloUI();
-            return { change, oldElo };
-        }
-
-        function updateEloUI() {
-            const rank = getRank(eloData.current);
-            const pct = (eloData.current / ELO_CONFIG.MAX_ELO) * 100;
-            
-            document.getElementById('eloValue').textContent = eloData.current;
-07:23
-document.getElementById('eloRank').textContent = rank.name;
-            const bar = document.getElementById('eloProgress');
-            bar.className = `elo-progress ${rank.class}`;
-            bar.style.width = pct + '%';
-        }
-
-        // Игра
-        const GAME_DURATION = 180;
-        const WIN_SCORE = 5;
-        const FRICTION = 0.985;
-        const MAX_SPEED = 15;
-
-        let gameState = {
-            running: false,
-            paused: false,
-            timeRemaining: GAME_DURATION,
-            playerScore: 0,
-            botScore: 0,
-            shots: 0,
-            startTime: null
-        };
-
-        let puck = { x: 0, y: 0, vx: 0, vy: 0, radius: 10, color: '#fff' };
-        let player = { x: 0, y: 0, radius: 22, color: '#4ecdc4', targetX: 0, targetY: 0 };
-        let bot = { x: 0, y: 0, radius: 22, color: '#ff6b6b', speed: 3.5 };
-
-        function resetPositions() {
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            
-            puck.x = cx;
-            puck.y = cy;
-            puck.vx = 0;
-            puck.vy = 0;
-            
-            player.x = cx;
-            player.y = canvas.height - 60;
-            player.targetX = player.x;
-            player.targetY = player.y;
-            
-            bot.x = cx;
-            bot.y = 60;
-        }
-
-        // ========== ОБРАБОТКА ВВОДА - ГЛАВНЫЙ ФИКС ==========
         
-        function getPos(clientX, clientY) {
-            const rect = container.getBoundingClientRect();
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
-
-        function setPlayerTarget(x, y) {
-            // Ограничение: только нижняя половина
-            const minY = canvas.height / 2 + player.radius;
-            const maxY = canvas.height - player.radius - 5;
-            const minX = player.radius;
-            const maxX = canvas.width - player.radius;
-            
-            player.targetX = Math.max(minX, Math.min(maxX, x));
-            player.targetY = Math.max(minY, Math.min(maxY, y));
-        }
-
-        let isTouching = false;
-
-        // Обработчики на touchLayer (не на canvas!)
-        touchLayer.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            log('TOUCH start');
-            
-            if (!gameState.running) {
-                startGame();
-                return;
+        // Игра
+        class SiriusClicker {
+            constructor() {
+                this.score = 0;
+                this.totalClicks = 0;
+21:51
+this.clickPower = 1;
+                this.autoClick = 0;
+                this.combo = 0;
+                this.comboTimer = null;
+                this.lastClickTime = 0;
+                
+                this.upgrades = [
+                    {
+                        id: 'power',
+                        name: 'Сила Звезды',
+                        desc: '+1 к силе клика',
+                        icon: '⚡',
+                        baseCost: 50,
+                        cost: 50,
+                        level: 0,
+                        effect: () => { this.clickPower += 1; },
+                        type: 'click'
+                    },
+                    {
+                        id: 'auto',
+                        name: 'Звёздный Дождь',
+                        desc: '+1 авто-клик/сек',
+                        icon: '☄️ ',
+                        baseCost: 100,
+                        cost: 100,
+                        level: 0,
+                        effect: () => { this.autoClick += 1; },
+                        type: 'auto'
+                    },
+                    {
+                        id: 'critical',
+                        name: 'Критический Удар',
+                        desc: 'Шанс x3 урона',
+                        icon: '💥 ',
+                        baseCost: 500,
+                        cost: 500,
+                        level: 0,
+                        effect: () => { this.criticalChance = (this.criticalChance || 0) + 0.1; },
+                        type: 'special'
+                    },
+                    {
+                        id: 'multitap',
+                        name: 'Мультитап',
+                        desc: '+3 к силе клика',
+                        icon: '👆',
+                        baseCost: 250,
+                        cost: 250,
+                        level: 0,
+                        effect: () => { this.clickPower += 3; },
+                        type: 'click'
+                    },
+                    {
+                        id: 'supernova',
+                        name: 'Сверхновая',
+                        desc: '+5 авто-клик/сек',
+                        icon: '🌌 ',
+                        baseCost: 1000,
+                        cost: 1000,
+                        level: 0,
+                        effect: () => { this.autoClick += 5; },
+                        type: 'auto'
+                    },
+                    {
+                        id: 'cosmic',
+                        name: 'Космическая Сила',
+                        desc: 'x2 ко всему урону',
+                        icon: '🌠 ',
+                        baseCost: 5000,
+                        cost: 5000,
+                        level: 0,
+                        effect: () => { this.clickPower *= 2; this.autoClick *= 2; },
+                        type: 'special'
+                    }
+                ];
+                
+                this.achievements = {
+                    start: true,
+                    '100clicks': false,
+                    '1000stars': false,
+                    firstUpgrade: false,
+                    master: false
+                };
+                
+                this.init();
             }
             
-            isTouching = true;
-            const t = e.touches[0];
-            const pos = getPos(t.clientX, t.clientY);
-            setPlayerTarget(pos.x, pos.y);
-            
-        }, {passive: false, capture: true});
-
-        touchLayer.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            if (!gameState.running || !isTouching) return;
-            
-            const t = e.touches[0];
-            const pos = getPos(t.clientX, t.clientY);
-            setPlayerTarget(pos.x, pos.y);
-            
-        }, {passive: false, capture: true});
-
-        touchLayer.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            isTouching = false;
-            log('TOUCH end');
-        }, {passive: false, capture: true});
-
-        touchLayer.addEventListener('touchcancel', function(e) {
-            isTouching = false;
-            log('TOUCH cancel');
-        }, {passive: false, capture: true});
-
-        // Мышь для теста
-        touchLayer.addEventListener('mousedown', function(e) {
-            e.preventDefault();
-            log('MOUSE down');
-            
-            if (!gameState.running) {
-                startGame();
-                return;
-            }
-            
-            isTouching = true;
-            const pos = getPos(e.clientX, e.clientY);
-            setPlayerTarget(pos.x, pos.y);
-        });
-
-        touchLayer.addEventListener('mousemove', function(e) {
-07:23
-if (!isTouching || !gameState.running) return;
-            e.preventDefault();
-            const pos = getPos(e.clientX, e.clientY);
-            setPlayerTarget(pos.x, pos.y);
-        });
-
-        touchLayer.addEventListener('mouseup', function(e) {
-            isTouching = false;
-            log('MOUSE up');
-        });
-
-        touchLayer.addEventListener('mouseleave', function() {
-            isTouching = false;
-        });
-
-        // Клик как запасной вариант
-        touchLayer.addEventListener('click', function(e) {
-            log('CLICK');
-            if (!gameState.running) startGame();
-        });
-
-        // Физика
-        function updatePlayer() {
-            const dx = player.targetX - player.x;
-            const dy = player.targetY - player.y;
-            player.x += dx * 0.2;
-            player.y += dy * 0.2;
-        }
-
-        function updateBot() {
-            const cx = canvas.width / 2;
-            
-            // Предсказание позиции шайбы
-            const predictX = puck.x + puck.vx * 3;
-            const predictY = puck.y + puck.vy * 3;
-            
-            let targetX, targetY;
-            
-            if (puck.y < canvas.height / 2 && puck.vy < 5) {
-                // Атака
-                targetX = predictX;
-                targetY = Math.min(predictY + 20, canvas.height/2 - 30);
-            } else {
-                // Защита ворот
-                const goalX = cx;
-                const defendX = goalX + (puck.x - goalX) * 0.4;
-                targetX = Math.max(40, Math.min(canvas.width - 40, defendX));
-                targetY = 50 + Math.abs(puck.x - cx) * 0.05;
-            }
-            
-            bot.x += (targetX - bot.x) * (bot.speed / 10);
-            bot.y += (targetY - bot.y) * (bot.speed / 10);
-            
-            bot.x = Math.max(bot.radius, Math.min(canvas.width - bot.radius, bot.x));
-            bot.y = Math.max(bot.radius, Math.min(canvas.height/2 - bot.radius, bot.y));
-        }
-
-        function updatePuck() {
-            puck.x += puck.vx;
-            puck.y += puck.vy;
-            puck.vx *= FRICTION;
-            puck.vy *= FRICTION;
-            
-            const speed = Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy);
-            if (speed > MAX_SPEED) {
-                puck.vx = (puck.vx / speed) * MAX_SPEED;
-                puck.vy = (puck.vy / speed) * MAX_SPEED;
-            }
-            
-            // Стенки боковые
-            if (puck.x - puck.radius < 0) {
-                puck.x = puck.radius;
-                puck.vx *= -0.8;
-            }
-            if (puck.x + puck.radius > canvas.width) {
-                puck.x = canvas.width - puck.radius;
-                puck.vx *= -0.8;
-            }
-            
-            // Голы
-            const goalW = 80;
-            const goalL = (canvas.width - goalW) / 2;
-            const goalR = (canvas.width + goalW) / 2;
-            
-            if (puck.y < 0 && puck.x > goalL && puck.x < goalR) {
-                score('player');
-            } else if (puck.y > canvas.height && puck.x > goalL && puck.x < goalR) {
-                score('bot');
-            } else {
-                // Отскок от верха/низа (не гол)
-                if (puck.y - puck.radius < 0) {
-                    puck.y = puck.radius;
-                    puck.vy *= -0.8;
-                }
-                if (puck.y + puck.radius > canvas.height) {
-                    puck.y = canvas.height - puck.radius;
-                    puck.vy *= -0.8;
+            init() {
+                this.loadProgress();
+                this.createStars();
+                this.renderUpgrades();
+                this.setupEventListeners();
+                this.startAutoClick();
+                this.updateDisplay();
+                
+                // Вибрация при запуске если доступна
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('light');
                 }
             }
             
-            checkHit(player);
-            checkHit(bot);
-        }
-
-        function checkHit(paddle) {
-            const dx = puck.x - paddle.x;
-            const dy = puck.y - paddle.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const minDist = puck.radius + paddle.radius;
-            
-            if (dist < minDist) {
-                const nx = dx / dist;
-                const ny = dy / dist;
-                const overlap = minDist - dist;
-07:23
-puck.x += nx * overlap;
-                puck.y += ny * overlap;
-                
-                const speed = Math.sqrt(puck.vx*puck.vx + puck.vy*puck.vy);
-                const hitPower = 4;
-                
-                puck.vx = nx * (speed + hitPower);
-                puck.vy = ny * (speed + hitPower);
-                
-                if (paddle === player) {
-                    gameState.shots++;
-                    document.getElementById('shots').textContent = gameState.shots;
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            createStars() {
+                const container = document.getElementById('stars');
+                for (let i = 0; i < 50; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = Math.random() * 100 + '%';
+21:51
+star.style.top = Math.random() * 100 + '%';
+                    star.style.width = Math.random() * 3 + 1 + 'px';
+                    star.style.height = star.style.width;
+                    star.style.animationDelay = Math.random() * 2 + 's';
+                    container.appendChild(star);
                 }
             }
-        }
-
-        function score(who) {
-            if (who === 'player') {
-                gameState.playerScore++;
-                showMsg('ГОЛ! 🎉 ');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                gameState.botScore++;
-                showMsg('БОТ ЗАБИЛ! 😤 ');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
             
-            document.getElementById('playerScore').textContent = gameState.playerScore;
-            document.getElementById('botScore').textContent = gameState.botScore;
-            
-            resetPositions();
-            
-            if (gameState.playerScore >= WIN_SCORE || gameState.botScore >= WIN_SCORE) {
-                endGame();
-            }
-        }
-
-        function showMsg(text) {
-            const el = document.getElementById('goalMessage');
-            el.textContent = text;
-            el.classList.remove('hidden');
-            el.classList.add('show');
-            setTimeout(() => {
-                el.classList.remove('show');
-                el.classList.add('hidden');
-            }, 1500);
-        }
-
-        function draw() {
-            // Очистка
-            ctx.fillStyle = 'rgba(10, 30, 50, 0.3)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            const cx = canvas.width / 2;
-            
-            // Линия центра
-            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([8, 8]);
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height/2);
-            ctx.lineTo(canvas.width, canvas.height/2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            // Центральный круг
-            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(cx, canvas.height/2, 40, 0, Math.PI*2);
-            ctx.stroke();
-            
-            // Ворота
-            const goalW = 80;
-            ctx.fillStyle = 'rgba(78, 205, 196, 0.25)';
-            ctx.fillRect((canvas.width - goalW)/2, 0, goalW, 4);
-            ctx.fillStyle = 'rgba(255, 107, 107, 0.25)';
-            ctx.fillRect((canvas.width - goalW)/2, canvas.height - 4, goalW, 4);
-            
-            // Игроки
-            drawCircle(player.x, player.y, player.radius, player.color);
-            drawCircle(bot.x, bot.y, bot.radius, bot.color);
-            
-            // Шайба
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(255,255,255,0.5)';
-            drawCircle(puck.x, puck.y, puck.radius, puck.color);
-            ctx.shadowBlur = 0;
-        }
-
-        function drawCircle(x, y, r, color) {
-            // Тень
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.beginPath();
-            ctx.arc(x + 2, y + 2, r, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Круг
-            const grad = ctx.createRadialGradient(x - r/3, y - r/3, 0, x, y, r);
-            grad.addColorStop(0, color);
-            grad.addColorStop(1, color);
-            
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Обводка
-            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-07:23
-ctx.lineWidth = 2;
-            ctx.stroke();
-        }
-
-        let lastTime = Date.now();
-
-        function loop() {
-            if (!gameState.running || gameState.paused) return;
-            
-            updatePlayer();
-            updateBot();
-            updatePuck();
-            draw();
-            
-            // Таймер
-            if (Date.now() - lastTime > 1000) {
-                gameState.timeRemaining--;
-                const m = Math.floor(gameState.timeRemaining / 60);
-                const s = gameState.timeRemaining % 60;
-                document.getElementById('timer').textContent = 
-                    `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                lastTime = Date.now();
+            setupEventListeners() {
+                const sirius = document.getElementById('sirius');
                 
-                if (gameState.timeRemaining <= 0) endGame();
+                sirius.addEventListener('click', (e) => this.handleClick(e));
+                sirius.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.handleClick(e.touches[0]);
+                });
             }
             
-            requestAnimationFrame(loop);
-        }
-
-        function startGame() {
-            log('GAME START');
-            document.getElementById('gameStatus').classList.add('hidden');
-            gameState.running = true;
-            gameState.paused = false;
-            gameState.startTime = Date.now();
-            resetPositions();
-            lastTime = Date.now();
-            loop();
-        }
-
-        function pauseGame() {
-            gameState.paused = !gameState.paused;
-            if (!gameState.paused) {
-                lastTime = Date.now();
-                loop();
-            }
-        }
-
-        function resetGame() {
-            gameState = {
-                running: false,
-                paused: false,
-                timeRemaining: GAME_DURATION,
-                playerScore: 0,
-                botScore: 0,
-                shots: 0,
-                startTime: null
-            };
-            
-            document.getElementById('gameOver').classList.remove('active');
-            document.getElementById('gameStatus').classList.remove('hidden');
-            document.getElementById('playerScore').textContent = '0';
-            document.getElementById('botScore').textContent = '0';
-            document.getElementById('shots').textContent = '0';
-            document.getElementById('timer').textContent = '03:00';
-            
-            resetPositions();
-            draw();
-            isTouching = false;
-        }
-
-        function endGame() {
-            gameState.running = false;
-            
-            const won = gameState.playerScore > gameState.botScore;
-            const dur = Math.floor((Date.now() - gameState.startTime) / 1000);
-            const m = Math.floor(dur / 60);
-            const s = dur % 60;
-            
-            const stats = {
-                duration: `${m}:${s.toString().padStart(2,'0')}`,
-                shots: gameState.shots,
-                goals: gameState.playerScore
-            };
-            
-            const elo = updateElo(won, stats);
-            
-            document.getElementById('winnerText').textContent = won ? 'ПОБЕДА! 🏆' : 'ПОРАЖЕНИЕ 😔 ';
-            document.getElementById('winnerText').className = 'winner-text ' + (won ? 'win' : 'lose');
-            document.getElementById('finalScore').textContent = `${gameState.playerScore} : ${gameState.botScore}`;
-            
-            const changeText = elo.change > 0 ? `+${elo.change}` : elo.change;
-            const changeEl = document.getElementById('eloChange');
-            changeEl.textContent = `${changeText} ELO`;
-            changeEl.className = 'elo-change ' + (elo.change >= 0 ? 'positive' : 'negative');
-            
-            document.getElementById('matchDuration').textContent = stats.duration;
-            document.getElementById('matchGoals').textContent = gameState.playerScore;
-            document.getElementById('matchShots').textContent = gameState.shots;
-            
-            document.getElementById('gameOver').classList.add('active');
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred(won ? 'success' : 'error');
-07:23
-}
-        }
-
-        function toggleHistory() {
-            const modal = document.getElementById('historyModal');
-            modal.classList.toggle('active');
-            if (modal.classList.contains('active')) renderHistory();
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '';
-            
-            if (eloData.history.length === 0) {
-                list.innerHTML = '<div style="text-align:center;color:#888;padding:30px;">Нет матчей</div>';
-                return;
-            }
-            
-            eloData.history.slice(0, 15).forEach(m => {
-                const d = new Date(m.date);
-                const dateStr = `${d.getDate()}.${d.getMonth()+1}`;
+            handleClick(e) {
+                const now = Date.now();
                 
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.innerHTML = `
-                    <div>
-                        <div class="history-result ${m.result}">${m.result === 'win' ? 'ПОБЕДА' : 'ПОРАЖ'}</div>
-                        <div style="font-size:10px;color:#888;">${dateStr} • ${m.duration}</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:16px;font-weight:700;">${m.score}</div>
-                        <div style="font-size:11px;color:${m.eloChange >= 0 ? '#4ecdc4' : '#ff6b6b'}">
-                            ${m.eloChange >= 0 ? '+' : ''}${m.eloChange}
+                // Система комбо
+                if (now - this.lastClickTime < 500) {
+                    this.combo++;
+                    this.showCombo();
+                } else {
+                    this.combo = 1;
+                }
+                this.lastClickTime = now;
+                
+                // Расчёт урона с комбо
+                let damage = this.clickPower * (1 + Math.floor(this.combo / 10) * 0.1);
+                
+                // Критический удар
+                let isCritical = false;
+                if (this.criticalChance && Math.random() < this.criticalChance) {
+                    damage *= 3;
+                    isCritical = true;
+                    this.showCritical(e.clientX || e.pageX, e.clientY || e.pageY);
+                }
+                
+                damage = Math.floor(damage);
+                this.score += damage;
+                this.totalClicks++;
+                
+                // Визуальные эффекты
+                this.createParticle(e.clientX || e.pageX, e.clientY || e.pageY, damage, isCritical);
+                this.animateSirius();
+                
+                // Вибрация
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred(isCritical ? 'heavy' : 'medium');
+                }
+                
+                // Проверка достижений
+                this.checkAchievements();
+                this.updateDisplay();
+                
+                // Сброс комбо
+                clearTimeout(this.comboTimer);
+                this.comboTimer = setTimeout(() => {
+                    this.combo = 0;
+                    document.getElementById('combo').classList.remove('active');
+                }, 2000);
+            }
+            
+            showCombo() {
+                const comboEl = document.getElementById('combo');
+                const comboValue = document.getElementById('comboValue');
+                comboValue.textContent = this.combo;
+                comboEl.classList.add('active');
+                
+                if (this.combo > 0 && this.combo % 10 === 0) {
+                    this.showNotification(`Комбо x${this.combo}! 🔥 `);
+                }
+            }
+            
+            showCritical(x, y) {
+                const crit = document.createElement('div');
+                crit.className = 'critical';
+                crit.textContent = 'CRITICAL!';
+                crit.style.left = x + 'px';
+                crit.style.top = y + 'px';
+                document.body.appendChild(crit);
+                setTimeout(() => crit.remove(), 800);
+            }
+            
+            createParticle(x, y, value, isCritical) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = '+' + value;
+                particle.style.left = (x - 20) + 'px';
+                particle.style.top = (y - 50) + 'px';
+                
+                if (isCritical) {
+                    particle.style.color = '#ff006e';
+                    particle.style.fontSize = '32px';
+                }
+21:51
+document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+            
+            animateSirius() {
+                const sirius = document.getElementById('sirius');
+                sirius.classList.add('clicked');
+                setTimeout(() => sirius.classList.remove('clicked'), 300);
+            }
+            
+            buyUpgrade(index) {
+                const upgrade = this.upgrades[index];
+                
+                if (this.score >= upgrade.cost) {
+                    this.score -= upgrade.cost;
+                    upgrade.level++;
+                    upgrade.cost = Math.floor(upgrade.baseCost * Math.pow(1.15, upgrade.level));
+                    upgrade.effect();
+                    
+                    // Анимация покупки
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('success');
+                    }
+                    
+                    this.showNotification(`${upgrade.name} куплено!`);
+                    
+                    // Достижение
+                    if (!this.achievements.firstUpgrade) {
+                        this.achievements.firstUpgrade = true;
+                        this.unlockAchievement('firstUpgrade');
+                    }
+                    
+                    this.checkAchievements();
+                    this.renderUpgrades();
+                    this.updateDisplay();
+                } else {
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('error');
+                    }
+                }
+            }
+            
+            renderUpgrades() {
+                const list = document.getElementById('upgradeList');
+                list.innerHTML = '';
+                
+                this.upgrades.forEach((upgrade, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'upgrade-item ' + (this.score < upgrade.cost ? 'disabled' : '');
+                    item.innerHTML = `
+                        <div class="upgrade-icon">${upgrade.icon}</div>
+                        <div class="upgrade-info">
+                            <div class="upgrade-name">${upgrade.name}</div>
+                            <div class="upgrade-desc">${upgrade.desc}</div>
                         </div>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
+                        <div class="upgrade-cost">
+                            <span>⭐</span>
+                            <span>${upgrade.cost}</span>
+                        </div>
+                        <div class="upgrade-level">Lv.${upgrade.level}</div>
+                    `;
+                    
+                    item.onclick = () => this.buyUpgrade(index);
+                    list.appendChild(item);
+                });
+            }
+            
+            startAutoClick() {
+                setInterval(() => {
+                    if (this.autoClick > 0) {
+                        this.score += this.autoClick;
+                        this.updateDisplay();
+                        
+                        // Пассивная анимация
+                        if (Math.random() < 0.3) {
+                            const rect = document.getElementById('sirius').getBoundingClientRect();
+                            this.createParticle(
+                                rect.left + rect.width/2 + (Math.random() - 0.5) * 100,
+                                rect.top + rect.height/2,
+                                this.autoClick,
+                                false
+                            );
+                        }
+                    }
+                }, 1000);
+            }
+            
+            checkAchievements() {
+                if (this.totalClicks >= 100 && !this.achievements['100clicks']) {
+                    this.achievements['100clicks'] = true;
+                    this.unlockAchievement('100clicks');
+                }
+21:51
+if (this.score >= 1000 && !this.achievements['1000stars']) {
+                    this.achievements['1000stars'] = true;
+                    this.unlockAchievement('1000stars');
+                }
+                if (this.score >= 10000 && !this.achievements.master) {
+                    this.achievements.master = true;
+                    this.unlockAchievement('master');
+                }
+            }
+            
+            unlockAchievement(id) {
+                const el = document.querySelector(`[data-id="${id}"]`);
+                if (el) {
+                    el.classList.add('unlocked');
+                    this.showNotification(`Достижение разблокировано! 🏆`);
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('success');
+                    }
+                }
+            }
+            
+            showNotification(text) {
+                const notif = document.getElementById('notification');
+                notif.textContent = text;
+                notif.classList.add('show');
+                setTimeout(() => notif.classList.remove('show'), 2000);
+            }
+            
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score.toLocaleString();
+                document.getElementById('perSecond').textContent = `+${this.autoClick}/сек | Сила: ${this.clickPower}`;
+                this.renderUpgrades();
+            }
+            
+            saveProgress() {
+                const data = {
+                    score: this.score,
+                    totalClicks: this.totalClicks,
+                    clickPower: this.clickPower,
+                    autoClick: this.autoClick,
+                    upgrades: this.upgrades,
+                    achievements: this.achievements,
+                    criticalChance: this.criticalChance || 0
+                };
+                
+                localStorage.setItem('siriusClicker', JSON.stringify(data));
+                
+                // Сохранение в Telegram Cloud Storage если доступно
+                if (tg.CloudStorage) {
+                    tg.CloudStorage.setItem('gameData', JSON.stringify(data));
+                }
+                
+                this.showNotification('Прогресс сохранён! 💾 ');
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }
+            
+            loadProgress() {
+                const saved = localStorage.getItem('siriusClicker');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.score = data.score || 0;
+                    this.totalClicks = data.totalClicks || 0;
+                    this.clickPower = data.clickPower || 1;
+                    this.autoClick = data.autoClick || 0;
+                    this.criticalChance = data.criticalChance || 0;
+                    
+                    if (data.upgrades) {
+                        data.upgrades.forEach((u, i) => {
+                            if (this.upgrades[i]) {
+                                this.upgrades[i].level = u.level;
+                                this.upgrades[i].cost = u.cost;
+                            }
+                        });
+                    }
+                    
+                    if (data.achievements) {
+                        Object.keys(data.achievements).forEach(key => {
+                            if (data.achievements[key]) {
+                                this.achievements[key] = true;
+                                const el = document.querySelector(`[data-id="${key}"]`);
+                                if (el) el.classList.add('unlocked');
+                            }
+                        });
+                    }
+                }
+            }
+            
+            reset() {
+                if (confirm('Сбросить весь прогресс?')) {
+                    localStorage.removeItem('siriusClicker');
+21:51
+location.reload();
+                }
+            }
         }
-
-        // Старт
-        loadElo();
-        setTimeout(() => {
-            resize();
-            resetPositions();
-            draw();
-            log('Ready! Touch the green area');
-        }, 300);
-
-        tg.MainButton.setText('🏒  Хокей');
-        tg.MainButton.show();
+        
+        // Запуск игры
+        const game = new SiriusClicker();
+        
+        // Автосохранение каждые 30 секунд
+        setInterval(() => {
+            game.saveProgress();
+        }, 30000);
+        
+        // Обработка сворачивания приложения
+        tg.onEvent('viewportChanged', () => {
+            game.saveProgress();
+        });
     </script>
 </body>
 </html>
-07:23
-Initial commit
