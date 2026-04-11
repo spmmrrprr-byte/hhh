@@ -51,7 +51,7 @@
         /* Шапка */
         .header {
             background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
-            padding: 15px;
+            padding: 10px;
             position: relative;
             z-index: 10;
             text-align: center;
@@ -59,7 +59,7 @@
         
         .game-title {
             font-family: 'Lilita One', cursive;
-            font-size: 28px;
+            font-size: 24px;
             background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -71,16 +71,16 @@
         .score-container {
             background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
             border: 2px solid #ffd700;
-            border-radius: 20px;
-            padding: 15px 30px;
-            margin: 10px auto;
-            max-width: 300px;
+            border-radius: 15px;
+            padding: 10px 20px;
+            margin: 8px auto;
+            max-width: 250px;
             backdrop-filter: blur(10px);
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
         
         .score-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #aaa;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -88,23 +88,23 @@
         
         .score-value {
             font-family: 'Lilita One', cursive;
-            font-size: 36px;
+            font-size: 28px;
             color: #ffd700;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
         }
         
         .per-second {
-            font-size: 14px;
+            font-size: 12px;
             color: #4ecdc4;
-            margin-top: 5px;
+            margin-top: 3px;
         }
         
         /* Зона клика */
         .click-zone {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,8 +113,8 @@
         
         .sirius-container {
             position: relative;
-            width: 250px;
-            height: 250px;
+            width: 160px;
+            height: 160px;
             cursor: pointer;
             transition: transform 0.1s;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
@@ -133,13 +133,14 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-21:51
+22:40
 .sirius-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+            pointer-events: none; /* Чтобы клики проходили через контейнер */
         }
         
         /* Аура вокруг Сириуса */
@@ -148,8 +149,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
             animation: pulse 2s infinite;
@@ -166,7 +167,7 @@
             position: absolute;
             pointer-events: none;
             font-weight: 900;
-            font-size: 24px;
+            font-size: 20px;
             color: #ffd700;
             text-shadow: 0 0 10px rgba(255,215,0,0.8);
             animation: floatUp 1s ease-out forwards;
@@ -183,50 +184,48 @@
                 opacity: 0; 
             }
         }
- }
-        }
         
         /* Магазин улучшений */
         .shop-section {
             background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
-            border-radius: 30px 30px 0 0;
-            padding: 20px;
-            margin-top: 20px;
+            border-radius: 25px 25px 0 0;
+            padding: 15px;
+            margin-top: 15px;
             position: relative;
             z-index: 10;
-            min-height: 300px;
+            min-height: 250px;
         }
         
         .shop-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
         
         .shop-title {
             font-family: 'Lilita One', cursive;
-            font-size: 24px;
+            font-size: 20px;
             color: #ffd700;
         }
         
         .upgrade-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 400px;
+            gap: 8px;
+            max-height: 350px;
             overflow-y: auto;
         }
         
         .upgrade-item {
             background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             border: 2px solid rgba(255,215,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
@@ -245,14 +244,14 @@
         }
         
         .upgrade-icon {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #ffd700, #ffed4e);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             flex-shrink: 0;
         }
         
@@ -262,33 +261,33 @@
         
         .upgrade-name {
             font-weight: 900;
-            font-size: 16px;
+            font-size: 14px;
             color: white;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         
         .upgrade-desc {
-            font-size: 12px;
+            font-size: 11px;
             color: #aaa;
         }
         
         .upgrade-cost {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            padding: 8px 15px;
-21:51
-border-radius: 20px;
+22:41
+background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            padding: 6px 12px;
+            border-radius: 15px;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
         
         .upgrade-level {
             position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 12px;
+            top: 4px;
+            right: 8px;
+            font-size: 10px;
             color: #4ecdc4;
             font-weight: 700;
         }
@@ -296,17 +295,18 @@ border-radius: 20px;
         /* Достижения */
         .achievements {
             display: flex;
-            gap: 10px;
-            padding: 10px;
+            gap: 8px;
+            padding: 8px;
             overflow-x: auto;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            justify-content: center;
         }
         
         .achievement {
             background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 10px;
-            min-width: 80px;
+            border-radius: 8px;
+            padding: 8px;
+            min-width: 70px;
             text-align: center;
             border: 2px solid transparent;
             transition: all 0.3s;
@@ -324,20 +324,20 @@ border-radius: 20px;
         }
         
         .achievement-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 20px;
+            margin-bottom: 3px;
         }
         
         .achievement-name {
-            font-size: 10px;
+            font-size: 9px;
             color: #aaa;
         }
         
         /* Кнопки управления */
         .controls {
             display: flex;
-            gap: 10px;
-            padding: 10px;
+            gap: 8px;
+            padding: 8px;
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -345,12 +345,12 @@ border-radius: 20px;
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 10px 20px;
+            border-radius: 20px;
             color: white;
             font-family: 'Nunito', sans-serif;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
@@ -373,7 +373,7 @@ border-radius: 20px;
         .critical {
             position: absolute;
             font-family: 'Lilita One', cursive;
-            font-size: 48px;
+            font-size: 36px;
             color: #ff006e;
             text-shadow: 0 0 20px rgba(255,0,110,0.8);
             pointer-events: none;
@@ -391,13 +391,13 @@ border-radius: 20px;
         /* Комбо система */
         .combo {
             position: fixed;
-            top: 100px;
-            right: 20px;
+            top: 80px;
+            right: 15px;
             background: linear-gradient(135deg, rgba(255,0,110,0.9), rgba(255,0,110,0.6));
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 15px;
             font-family: 'Lilita One', cursive;
-            font-size: 20px;
+            font-size: 16px;
             opacity: 0;
             transition: opacity 0.3s;
             z-index: 50;
@@ -410,23 +410,23 @@ border-radius: 20px;
         }
         
         @keyframes comboPulse {
-            from { transform: scale(1); }
+22:41
+from { transform: scale(1); }
             to { transform: scale(1.1); }
         }
         
         /* Уведомление */
-21:51
-.notification {
+        .notification {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             color: #1a0a2e;
-            padding: 20px 40px;
-            border-radius: 20px;
+            padding: 15px 30px;
+            border-radius: 15px;
             font-family: 'Lilita One', cursive;
-            font-size: 24px;
+            font-size: 20px;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
@@ -442,15 +442,34 @@ border-radius: 20px;
         /* Адаптивность */
         @media (max-width: 480px) {
             .click-zone {
-                width: 240px;
-                height: 240px;
+                width: 180px;
+                height: 180px;
             }
             .sirius-container {
-                width: 200px;
-                height: 200px;
+                width: 140px;
+                height: 140px;
+            }
+            .aura {
+                width: 190px;
+                height: 190px;
             }
             .game-title {
-                font-size: 24px;
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .click-zone {
+                width: 160px;
+                height: 160px;
+            }
+            .sirius-container {
+                width: 120px;
+                height: 120px;
+            }
+            .aura {
+                width: 170px;
+                height: 170px;
             }
         }
     </style>
@@ -460,7 +479,7 @@ border-radius: 20px;
     <div class="stars" id="stars"></div>
     
     <!-- Комбо счётчик -->
-    <div class<div class="combo" id="combo">COMBO x<span id="comboValue">1</span></div>
+    <div class="combo" id="combo">COMBO x<span id="comboValue">1</span></div>
     
     <!-- Уведомления -->
     <div class="notification" id="notification"></div>
@@ -516,9 +535,10 @@ border-radius: 20px;
     </div>
     
     <!-- Магазин -->
-    <div class="shop-section">
+22:41
+<div class="shop-section">
         <div class="shop-header">
-            <span style="font-size: 24px;">🛒 </span>
+            <span style="font-size: 20px;">🛒 </span>
             <h2 class="shop-title">Улучшения</h2>
         </div>
         <div class="upgrade-list" id="upgradeList"></div>
@@ -535,8 +555,7 @@ border-radius: 20px;
             constructor() {
                 this.score = 0;
                 this.totalClicks = 0;
-21:51
-this.clickPower = 1;
+                this.clickPower = 1;
                 this.autoClick = 0;
                 this.combo = 0;
                 this.comboTimer = null;
@@ -629,9 +648,8 @@ this.clickPower = 1;
                 this.setupEventListeners();
                 this.startAutoClick();
                 this.updateDisplay();
-                
-                // Вибрация при запуске если доступна
-                if (tg.HapticFeedback) {
+22:41
+if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('light');
                 }
             }
@@ -642,8 +660,7 @@ this.clickPower = 1;
                     const star = document.createElement('div');
                     star.className = 'star';
                     star.style.left = Math.random() * 100 + '%';
-21:51
-star.style.top = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
                     star.style.width = Math.random() * 3 + 1 + 'px';
                     star.style.height = star.style.width;
                     star.style.animationDelay = Math.random() * 2 + 's';
@@ -654,11 +671,17 @@ star.style.top = Math.random() * 100 + '%';
             setupEventListeners() {
                 const sirius = document.getElementById('sirius');
                 
+                // Обработка кликов и касаний
                 sirius.addEventListener('click', (e) => this.handleClick(e));
                 sirius.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    this.handleClick(e.touches[0]);
-                });
+                    const touch = e.touches[0];
+                    this.handleClick({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        target: e.target
+                    });
+                }, {passive: false});
             }
             
             handleClick(e) {
@@ -681,7 +704,7 @@ star.style.top = Math.random() * 100 + '%';
                 if (this.criticalChance && Math.random() < this.criticalChance) {
                     damage *= 3;
                     isCritical = true;
-                    this.showCritical(e.clientX || e.pageX, e.clientY || e.pageY);
+                    this.showCritical(e.clientX, e.clientY);
                 }
                 
                 damage = Math.floor(damage);
@@ -689,7 +712,7 @@ star.style.top = Math.random() * 100 + '%';
                 this.totalClicks++;
                 
                 // Визуальные эффекты
-                this.createParticle(e.clientX || e.pageX, e.clientY || e.pageY, damage, isCritical);
+                this.createParticle(e.clientX, e.clientY, damage, isCritical);
                 this.animateSirius();
                 
                 // Вибрация
@@ -726,7 +749,8 @@ star.style.top = Math.random() * 100 + '%';
                 crit.textContent = 'CRITICAL!';
                 crit.style.left = x + 'px';
                 crit.style.top = y + 'px';
-                document.body.appendChild(crit);
+22:41
+document.body.appendChild(crit);
                 setTimeout(() => crit.remove(), 800);
             }
             
@@ -739,10 +763,10 @@ star.style.top = Math.random() * 100 + '%';
                 
                 if (isCritical) {
                     particle.style.color = '#ff006e';
-                    particle.style.fontSize = '32px';
+                    particle.style.fontSize = '28px';
                 }
-21:51
-document.body.appendChild(particle);
+                
+                document.body.appendChild(particle);
                 setTimeout(() => particle.remove(), 1000);
             }
             
@@ -761,14 +785,12 @@ document.body.appendChild(particle);
                     upgrade.cost = Math.floor(upgrade.baseCost * Math.pow(1.15, upgrade.level));
                     upgrade.effect();
                     
-                    // Анимация покупки
                     if (tg.HapticFeedback) {
                         tg.HapticFeedback.notificationOccurred('success');
                     }
                     
                     this.showNotification(`${upgrade.name} куплено!`);
                     
-                    // Достижение
                     if (!this.achievements.firstUpgrade) {
                         this.achievements.firstUpgrade = true;
                         this.unlockAchievement('firstUpgrade');
@@ -815,12 +837,12 @@ document.body.appendChild(particle);
                         this.score += this.autoClick;
                         this.updateDisplay();
                         
-                        // Пассивная анимация
                         if (Math.random() < 0.3) {
                             const rect = document.getElementById('sirius').getBoundingClientRect();
                             this.createParticle(
                                 rect.left + rect.width/2 + (Math.random() - 0.5) * 100,
-                                rect.top + rect.height/2,
+22:41
+rect.top + rect.height/2,
                                 this.autoClick,
                                 false
                             );
@@ -834,8 +856,7 @@ document.body.appendChild(particle);
                     this.achievements['100clicks'] = true;
                     this.unlockAchievement('100clicks');
                 }
-21:51
-if (this.score >= 1000 && !this.achievements['1000stars']) {
+                if (this.score >= 1000 && !this.achievements['1000stars']) {
                     this.achievements['1000stars'] = true;
                     this.unlockAchievement('1000stars');
                 }
@@ -882,7 +903,6 @@ if (this.score >= 1000 && !this.achievements['1000stars']) {
                 
                 localStorage.setItem('siriusClicker', JSON.stringify(data));
                 
-                // Сохранение в Telegram Cloud Storage если доступно
                 if (tg.CloudStorage) {
                     tg.CloudStorage.setItem('gameData', JSON.stringify(data));
                 }
@@ -915,7 +935,8 @@ if (this.score >= 1000 && !this.achievements['1000stars']) {
                     if (data.achievements) {
                         Object.keys(data.achievements).forEach(key => {
                             if (data.achievements[key]) {
-                                this.achievements[key] = true;
+22:41
+this.achievements[key] = true;
                                 const el = document.querySelector(`[data-id="${key}"]`);
                                 if (el) el.classList.add('unlocked');
                             }
@@ -927,21 +948,17 @@ if (this.score >= 1000 && !this.achievements['1000stars']) {
             reset() {
                 if (confirm('Сбросить весь прогресс?')) {
                     localStorage.removeItem('siriusClicker');
-21:51
-location.reload();
+                    location.reload();
                 }
             }
         }
         
-        // Запуск игры
         const game = new SiriusClicker();
         
-        // Автосохранение каждые 30 секунд
         setInterval(() => {
             game.saveProgress();
         }, 30000);
         
-        // Обработка сворачивания приложения
         tg.onEvent('viewportChanged', () => {
             game.saveProgress();
         });
